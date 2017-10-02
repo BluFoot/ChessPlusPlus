@@ -33,3 +33,6 @@ obj/
 deps.debug/
 objs.debug/
 CMakeFiles/
+
+.idea/
+cmake-build-debug/
