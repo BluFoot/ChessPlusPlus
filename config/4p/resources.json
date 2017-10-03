@@ -1,0 +1,54 @@
+{
+  "": "res/img/missing.png",
+  "menu": {
+    "title": "res/img/title.png",
+    "background": "res/img/chessboard_4p.png",
+    "font": "res/font/OpenSans/OpenSans-Semibold.ttf"
+  },
+  "board": {
+    "board": "res/img/chessboard_4p.png",
+    "valid move": "res/img/valid_move.png",
+    "enemy move": "res/img/enemy_move.png",
+    "valid capture": "res/img/valid_capture.png",
+    "enemy capture": "res/img/enemy_capture.png",
+    "pieces": {
+      "Red": {
+        "Pawn": "res/img/pieces/red/pawn.png",
+        "Rook": "res/img/pieces/red/rook.png",
+        "Knight": "res/img/pieces/red/knight.png",
+        "Bishop": "res/img/pieces/red/bishop.png",
+        "Queen": "res/img/pieces/red/queen.png",
+        "King": "res/img/pieces/red/king.png",
+        "": "res/img/missing.png"
+      },
+      "Blue": {
+        "Pawn": "res/img/pieces/blue/pawn.png",
+        "Rook": "res/img/pieces/blue/rook.png",
+        "Knight": "res/img/pieces/blue/knight.png",
+        "Bishop": "res/img/pieces/blue/bishop.png",
+        "Queen": "res/img/pieces/blue/queen.png",
+        "King": "res/img/pieces/blue/king.png",
+        "": "res/img/missing.png"
+      },
+      "Yellow": {
+        "Pawn": "res/img/pieces/blue/pawn.png",
+        "Rook": "res/img/pieces/blue/rook.png",
+        "Knight": "res/img/pieces/blue/knight.png",
+        "Bishop": "res/img/pieces/blue/bishop.png",
+        "Queen": "res/img/pieces/blue/queen.png",
+        "King": "res/img/pieces/blue/king.png",
+        "": "res/img/missing.png"
+      },
+      "Green": {
+        "Pawn": "res/img/pieces/blue/pawn.png",
+        "Rook": "res/img/pieces/blue/rook.png",
+        "Knight": "res/img/pieces/blue/knight.png",
+        "Bishop": "res/img/pieces/blue/bishop.png",
+        "Queen": "res/img/pieces/blue/queen.png",
+        "King": "res/img/pieces/blue/king.png",
+        "": "res/img/missing.png"
+      },
+      "": "res/img/missing.png"
+    }
+  }
+}

@@ -5,7 +5,7 @@ namespace chesspp
     namespace config
     {
         BoardConfig::BoardConfig(ResourcesConfig &res)
-        : Configuration{"config/chesspp/board.json"}
+        : Configuration{"config/" + GAME_MODE + "/board.json"}
         , board_width  {reader()["board"]["width"]      }
         , board_height {reader()["board"]["height"]     }
         , cell_width   {reader()["board"]["cell width"] }

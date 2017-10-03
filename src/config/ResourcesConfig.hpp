@@ -23,7 +23,7 @@ namespace chesspp
              * Loads resource configuration from "config/chesspp/resources.json"
              */
             ResourcesConfig()
-            : Configuration{"config/chesspp/resources.json"}
+            : Configuration{"config/" + GAME_MODE + "/resources.json"}
             , res{*this}
             {
             }

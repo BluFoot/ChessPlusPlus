@@ -26,7 +26,7 @@ int main(int nargs, char const *const *args)
     {
         sf::RenderWindow disp
         {
-            sf::VideoMode(640, 640),
+            sf::VideoMode(1280, 1280),
             "ChessPlusPlus",
             sf::Style::Close
         };

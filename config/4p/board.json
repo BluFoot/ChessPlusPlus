@@ -1,0 +1,70 @@
+{
+  "board":
+  {
+    "width":  16,
+    "height": 16,
+    "pieces":
+    [
+      [null    , null    , null    , null   , "Rook", "Knight", "Bishop", "King", "Queen", "Bishop", "Knight", "Rook", null  , null    , null    , null    ],
+      [null    , null    , null    , null   , "Pawn", "Pawn"  , "Pawn"  , "Pawn" , "Pawn", "Pawn"  , "Pawn"  , "Pawn", null  , null    , null    , null    ],
+      ["Rook"  , "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Rook"  ],
+      ["Knight", "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Knight"],
+      ["Bishop", "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Bishop"],
+      ["King"  , "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Queen" ],
+      ["Queen" , "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "King"  ],
+      ["Bishop", "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Bishop"],
+      ["Knight", "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Knight"],
+      ["Rook"  , "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Rook"  ],
+      [null    , null    , null    , null   , "Pawn", "Pawn"  , "Pawn"  , "Pawn" , "Pawn", "Pawn"  , "Pawn"  , "Pawn", null  , null    , null    , null    ],
+      [null    , null    , null    , null   , "Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook", null  , null    , null    , null    ],
+      [null    , null    , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , null    , null    ],
+      [null    , null    , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , null    , null    ],
+      [null    , null    , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , null    , null    ],
+      [null    , null    , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , null    , null    ]
+    ],
+    "suits":
+    [
+      [null    , null    , null    , null   ,"Yellow","Yellow","Yellow","Yellow","Yellow","Yellow","Yellow","Yellow", null  , null    , null    , null   ],
+      [null    , null    , null    , null   ,"Yellow","Yellow","Yellow","Yellow","Yellow","Yellow","Yellow","Yellow", null  , null    , null    , null   ],
+      ["Blue"  , "Blue"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "Green" , "Green"],
+      ["Blue"  , "Blue"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "Green" , "Green"],
+      ["Blue"  , "Blue"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "Green" , "Green"],
+      ["Blue"  , "Blue"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "Green" , "Green"],
+      ["Blue"  , "Blue"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "Green" , "Green"],
+      ["Blue"  , "Blue"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "Green" , "Green"],
+      ["Blue"  , "Blue"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "Green" , "Green"],
+      ["Blue"  , "Blue"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "Green" , "Green"],
+      [null    , null    , null    , null   , "Red"  , "Red"  , "Red"  , "Red"  , "Red"  , "Red"  , "Red"  , "Red"  , null  , null    , null    , null   ],
+      [null    , null    , null    , null   , "Red"  , "Red"  , "Red"  , "Red"  , "Red"  , "Red"  , "Red"  , "Red"  , null  , null    , null    , null   ],
+      [null    , null    , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , null    , null   ],
+      [null    , null    , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , null    , null   ],
+      [null    , null    , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , null    , null   ],
+      [null    , null    , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , null    , null   ]
+    ],
+    "cell width":  80,
+    "cell height": 80,
+    "metadata":
+    {
+      "pawn facing":
+      [
+        [null    , null    , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , null    , null  ],
+        [null    , null    , null    , null   , "South", "South", "South", "South", "South", "South", "South", "South", null  , null    , null    , null  ],
+        [null    , "East"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "West"  , null  ],
+        [null    , "East"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "West"  , null  ],
+        [null    , "East"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "West"  , null  ],
+        [null    , "East"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "West"  , null  ],
+        [null    , "East"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "West"  , null  ],
+        [null    , "East"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "West"  , null  ],
+        [null    , "East"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "West"  , null  ],
+        [null    , "East"  , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , "West"  , null  ],
+        [null    , null    , null    , null   , "North", "North", "North", "North", "North", "North", "North", "North", null  , null    , null    , null  ],
+        [null    , null    , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , null    , null  ],
+        [null    , null    , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , null    , null  ],
+        [null    , null    , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , null    , null  ],
+        [null    , null    , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , null    , null  ],
+        [null    , null    , null    , null   , null   , null   , null   , null   , null   , null   , null   , null   , null  , null    , null    , null  ]
+      ],
+      "first turn": "Red"
+    }
+  }
+}

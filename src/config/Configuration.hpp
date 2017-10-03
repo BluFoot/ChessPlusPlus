@@ -17,6 +17,9 @@ namespace chesspp
          */
         class Configuration
         {
+        public:
+            static std::string GAME_MODE;
+
         protected:
             /**
              * \brief
