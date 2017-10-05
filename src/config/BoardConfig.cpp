@@ -11,6 +11,10 @@ namespace chesspp
         , cell_width   {reader()["board"]["cell width"] }
         , cell_height  {reader()["board"]["cell height"]}
         {
+            auto player_values = reader()["board"]["players"];
+            for (size_t i = 0; i < player_values.length(); ++i)
+                players.emplace_back(player_values[i]);
+
             auto pieces = reader()["board"]["pieces"];
             auto suits  = reader()["board"]["suits"];
             for(BoardSize_t r = 0; r < board_height; ++r)
@@ -23,15 +27,6 @@ namespace chesspp
                     {
                         layout[{c, r}] = std::make_pair<PieceClass_t, SuitClass_t>(piece, suit);
                     }
-                }
-            }
-
-            auto const &tex = res.setting("board", "pieces");
-            for(auto const &suit : tex.object())
-            {
-                for(auto const &piece : suit.second.object())
-                {
-                    textures[suit.first][piece.first] = std::string(Textures_t::mapped_type::mapped_type(piece.second));
                 }
             }
         }

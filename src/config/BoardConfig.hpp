@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <utility>
 #include <map>
+#include <vector>
 
 namespace chesspp
 {
@@ -29,11 +30,12 @@ namespace chesspp
             using SuitClass_t = std::string;
             using Layout_t = std::map<Position_t, std::pair<PieceClass_t, SuitClass_t>>;
             using Textures_t = std::map<BoardConfig::SuitClass_t, std::map<BoardConfig::PieceClass_t, std::string>>;
+            using Players_t = std::vector<SuitClass_t>;
         private:
             BoardSize_t board_width, board_height;
+            Players_t players;
             CellSize_t cell_width, cell_height;
             Layout_t layout;
-            Textures_t textures;
 
         public:
             /**
@@ -47,10 +49,10 @@ namespace chesspp
 
             BoardSize_t       boardWidth   () const noexcept { return board_width;  }
             BoardSize_t       boardHeight  () const noexcept { return board_height; }
+            Players_t         playerList   () const noexcept { return players;      }
             Layout_t const   &initialLayout() const noexcept { return layout;       }
             CellSize_t        cellWidth    () const noexcept { return cell_width;   }
             CellSize_t        cellHeight   () const noexcept { return cell_height;  }
-            Textures_t const &texturePaths () const noexcept { return textures;     }
 
             /**
              * \brief

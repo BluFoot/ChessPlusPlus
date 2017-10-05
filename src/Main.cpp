@@ -1,3 +1,5 @@
+#define SFML_NO_DEPRECATED_WARNINGS
+
 #include "app/Application.hpp"
 #include "app/StartMenuState.hpp"
 #include "Debug.hpp"

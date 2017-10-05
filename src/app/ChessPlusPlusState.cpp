@@ -17,11 +17,8 @@ namespace chesspp
         , board_config{res_config}
         , graphics{display, res_config, board_config}
         , board{board_config}
-        , players{util::KeyIter<config::BoardConfig::Textures_t>
-                               (board_config.texturePaths().cbegin()),
-                  util::KeyIter<config::BoardConfig::Textures_t>
-                               (board_config.texturePaths().cend())}
-        , turn{players.find(board_config.metadata("first turn"))}
+        , players{board_config.playerList()}
+        , turn{players.cbegin()}
         {
             std::clog << "Number of players: " << players.size() << std::endl;
             if(turn == players.end())
