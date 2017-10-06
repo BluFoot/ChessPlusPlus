@@ -8,6 +8,7 @@
 #include "Application.hpp"
 
 #include <set>
+#include <random>
 
 namespace chesspp
 {
@@ -37,7 +38,9 @@ namespace chesspp
             void nextTurn();
             board::Board::Pieces_t::iterator find(board::Board::Position_t const &pos) const;
 
-        public:
+            std::mt19937 gen{0};
+
+          public:
             /**
              * \brief
              * Construct from the Application and sf::RenderWindow to be used.
@@ -53,6 +56,8 @@ namespace chesspp
              * Renders the chessboard, all chess pieces, and any highlighted moves.
              */
             virtual void onRender() override;
+
+            virtual void randomMove() override;
 
             /**
              * \brief

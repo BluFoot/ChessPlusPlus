@@ -18,6 +18,7 @@ target_compile_definitions(json-parser
 find_package(Boost REQUIRED COMPONENTS filesystem system)
 
 # Find SFML
+add_definitions(-DSFML_NO_DEPRECATED_WARNINGS)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/deps/SFML/cmake/Modules" ${CMAKE_MODULE_PATH})
 if(WIN32)
 	find_package(SFML 2 REQUIRED COMPONENTS graphics window system audio main)

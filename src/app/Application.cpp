@@ -1,3 +1,4 @@
+#include <zconf.h>
 #include "Application.hpp"
 
 namespace chesspp
@@ -14,6 +15,8 @@ namespace chesspp
                 {
                     onEvent(event);
                 }
+                state->randomMove();
+                usleep(10000);
 
                 state->onRender();
                 display.display();

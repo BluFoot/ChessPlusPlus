@@ -37,6 +37,8 @@ namespace chesspp
              */
             virtual void onRender() = 0;
 
+            virtual void randomMove() = 0;
+
         protected:
             /**
              * \brief

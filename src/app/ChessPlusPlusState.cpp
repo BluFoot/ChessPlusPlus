@@ -129,7 +129,36 @@ namespace chesspp
                         }
                     }
                 }();
-                selected = board.end(); //deselect
+                //selected = board.end(); //deselect
+            }
+        }
+
+        void ChessPlusPlusState::randomMove() {
+            std::vector<std::vector<config::BoardConfig::BoardSize_t>> points_vec{4, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}};
+
+            for (auto& points : points_vec)
+                std::shuffle(points.begin(), points.end(), gen);
+
+            for (auto x1 : points_vec[0]) {
+                for (auto y1 : points_vec[1]) {
+                    selected = board.end();
+                    p.x = x1;
+                    p.y = y1;
+                    onLButtonReleased(0, 0);
+                    if (selected == board.end())
+                        continue;
+
+                    for (auto x2 : points_vec[2]) {
+                        for (auto y2 : points_vec[3]) {
+                            auto prev_turn = turn;
+                            p.x = x2;
+                            p.y = y2;
+                            onLButtonReleased(0, 0);
+                            if (prev_turn != turn)
+                                return;
+                        }
+                    }
+                }
             }
         }
     }

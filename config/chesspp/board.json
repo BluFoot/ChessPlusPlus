@@ -3,6 +3,7 @@
     {
         "width":  8,
         "height": 8,
+        "players": ["White", "Black"],
         "pieces":
         [
             ["Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"],
@@ -39,8 +40,7 @@
                 [null   , null   , null   , null   , null   , null   , null   , null   ],
                 ["North", "North", "North", "North", "North", "North", "North", "North"],
                 [null   , null   , null   , null   , null   , null   , null   , null   ]
-            ],
-            "first turn": "White"
+            ]
         }
     }
 }

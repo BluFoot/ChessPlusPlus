@@ -48,6 +48,8 @@ namespace chesspp
              */
             virtual void onRender() override;
 
+            virtual void randomMove() override {};
+
             /**
              * \brief
              * Handles clicking on the menu buttons.

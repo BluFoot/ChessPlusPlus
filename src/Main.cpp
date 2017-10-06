@@ -1,5 +1,3 @@
-#define SFML_NO_DEPRECATED_WARNINGS
-
 #include "app/Application.hpp"
 #include "app/StartMenuState.hpp"
 #include "Debug.hpp"
@@ -8,6 +6,7 @@
 #include <iostream>
 #include <typeinfo>
 #include <cstdlib>
+#include <app/ChessPlusPlusState.hpp>
 
 /**
  * \brief
@@ -33,7 +32,7 @@ int main(int nargs, char const *const *args)
             sf::Style::Close
         };
         chesspp::app::Application app {disp};
-        app.changeState<chesspp::app::StartMenuState>(std::ref(app), std::ref(disp));
+        app.changeState<chesspp::app::ChessPlusPlusState>(std::ref(app), std::ref(disp));
         return app.execute();
     }
     catch(std::exception &e)
