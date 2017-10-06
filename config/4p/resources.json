@@ -31,21 +31,21 @@
         "": "res/img/missing.png"
       },
       "Yellow": {
-        "Pawn": "res/img/pieces/blue/pawn.png",
-        "Rook": "res/img/pieces/blue/rook.png",
-        "Knight": "res/img/pieces/blue/knight.png",
-        "Bishop": "res/img/pieces/blue/bishop.png",
-        "Queen": "res/img/pieces/blue/queen.png",
-        "King": "res/img/pieces/blue/king.png",
+        "Pawn": "res/img/pieces/yellow/pawn.png",
+        "Rook": "res/img/pieces/yellow/rook.png",
+        "Knight": "res/img/pieces/yellow/knight.png",
+        "Bishop": "res/img/pieces/yellow/bishop.png",
+        "Queen": "res/img/pieces/yellow/queen.png",
+        "King": "res/img/pieces/yellow/king.png",
         "": "res/img/missing.png"
       },
       "Green": {
-        "Pawn": "res/img/pieces/blue/pawn.png",
-        "Rook": "res/img/pieces/blue/rook.png",
-        "Knight": "res/img/pieces/blue/knight.png",
-        "Bishop": "res/img/pieces/blue/bishop.png",
-        "Queen": "res/img/pieces/blue/queen.png",
-        "King": "res/img/pieces/blue/king.png",
+        "Pawn": "res/img/pieces/green/pawn.png",
+        "Rook": "res/img/pieces/green/rook.png",
+        "Knight": "res/img/pieces/green/knight.png",
+        "Bishop": "res/img/pieces/green/bishop.png",
+        "Queen": "res/img/pieces/green/queen.png",
+        "King": "res/img/pieces/green/king.png",
         "": "res/img/missing.png"
       },
       "": "res/img/missing.png"
