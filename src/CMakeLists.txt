@@ -1,7 +1,7 @@
 # Add sources
 target_sources(ChessPlusPlus PUBLIC
-	"${CMAKE_CURRENT_LIST_DIR}/Debug.cpp"
-)
+        "${CMAKE_CURRENT_LIST_DIR}/Debug.cpp"
+        )
 
 # Divvy out work to subdirectories
 add_subdirectory("app/")

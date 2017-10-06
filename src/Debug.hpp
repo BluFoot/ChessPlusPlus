@@ -3,13 +3,13 @@
 
 namespace chesspp
 {
-    /**
-     * \brief
-     * Redirects std::clog, std::cerr, and std::cout to individual files, permanently.
-     * 
-     * Calling this more than once is harmless and has no effect.
-     */
-    void enableRedirection() noexcept;
+/**
+ * \brief
+ * Redirects std::clog, std::cerr, and std::cout to individual files, permanently.
+ *
+ * Calling this more than once is harmless and has no effect.
+ */
+void enableRedirection() noexcept;
 }
 
 #endif

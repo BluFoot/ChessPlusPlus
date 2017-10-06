@@ -6,23 +6,22 @@
 
 namespace chesspp
 {
-    namespace piece
-    {
-        class Pawn
-        : public virtual Piece
-        {
-            bool en_passant = true;
-            util::Direction facing;
+namespace piece
+{
+class Pawn: public virtual Piece
+{
+    bool en_passant = true;
+    util::Direction facing;
 
-        public:
-            Pawn(board::Board &b, Position_t const &pos, Suit_t const &s, Class_t const &pc, util::Direction const &face);
+  public:
+    Pawn(board::Board& b, Position_t const& pos, Suit_t const& s, Class_t const& pc, util::Direction const& face);
 
-            virtual void tick(Position_t const &p) override;
+    virtual void tick(Position_t const& p) override;
 
-        protected:
-            virtual void calcTrajectory() override;
-        };
-    }
+  protected:
+    virtual void calcTrajectory() override;
+};
+}
 }
 
 #endif
