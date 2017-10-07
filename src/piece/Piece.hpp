@@ -28,6 +28,7 @@ class Piece
     using Position_t = config::BoardConfig::Position_t;
     using Suit_t     = config::BoardConfig::SuitClass_t;
     using Class_t    = config::BoardConfig::PieceClass_t;
+    using Score_t    = config::BoardConfig::Score_t;
 
     /**
      * \brief
@@ -39,6 +40,7 @@ class Piece
     Suit_t s;
     Class_t c;
     std::size_t m = 0;
+    Score_t v;
   public:
     /**
      * \brief
@@ -65,6 +67,8 @@ class Piece
      */
     std::size_t const& moves = m;
 
+    Score_t const& value = v;
+
     /**
      * \brief
      * Construct onto a board at the given position with the given suit and class.
@@ -75,7 +79,7 @@ class Piece
      * \param s The display suit of the piece.
      * \param pc The display class of the piece.
      */
-    Piece(board::Board& b, Position_t const& pos, Suit_t const& s, Class_t const& pc);
+    Piece(board::Board& b, Position_t const& pos, Suit_t const& s, Class_t const& pc, Score_t v);
     virtual ~Piece() = default;
 
     /**

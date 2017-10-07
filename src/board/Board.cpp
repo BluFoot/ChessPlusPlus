@@ -107,14 +107,15 @@ bool Board::capture(Pieces_t::iterator source, Movements_t::const_iterator targe
     }
 
     auto captured = capturable->first;
+    players.at((*source)->suit).score += (*captured)->value;
     if ((*captured)->pclass == "King") {
         players.at((*captured)->suit).alive = false;
         std::clog << "Player " << ((*captured)->suit) << " has been eliminated" << std::endl;
         if (1 == std::count_if(players.begin(), players.end(), [](const auto& player) { return player.second.alive; })) {
             winner_ = std::max_element(players.begin(), players.end(), [](const auto& player1, const auto& player2) {
                 return player1.second.score < player2.second.score;
-            })->first;
-            std::clog << "Game over, winner: " << winner_.value() << std::endl;
+            });
+            std::clog << "Game over, winner: " << winner_.value()->first << std::endl;
         }
     }
     pieces.erase(capturable->first);

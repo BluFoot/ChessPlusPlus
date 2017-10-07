@@ -7,11 +7,15 @@ namespace piece
 static auto ArcherRegistration = board::Board::registerPieceClass("Archer", [](board::Board& b,
                                                                                board::Board::Position_t const& p,
                                                                                board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
-    return board::Board::Pieces_t::value_type(new Archer(b, p, s, "Archer"));
+    return board::Board::Pieces_t::value_type(new Archer(b, p, s, "Archer", 1));
 });
 
-Archer::Archer(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t const& pc)
-    : Piece{b, pos_, s_, pc} {
+Archer::Archer(board::Board& b,
+               Position_t const& pos_,
+               Suit_t const& s_,
+               Class_t const& pc,
+               Score_t const& v)
+    : Piece{b, pos_, s_, pc, v} {
 }
 
 void Archer::calcTrajectory() {

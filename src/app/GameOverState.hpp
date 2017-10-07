@@ -26,6 +26,7 @@ class GameOverState: public AppState
 
     Button game_over_text;
     Button winner_text;
+    Button score_text;
 
   public:
     /**
@@ -36,9 +37,7 @@ class GameOverState: public AppState
      * \param display The sf::RenderWindow use during onRender(), must outlive this
      * instance.
      */
-    GameOverState(Application& app,
-                  sf::RenderWindow& display,
-                  const std::string& winner);
+    GameOverState(Application& app, sf::RenderWindow& display, const std::string& winner, const std::string& score);
 
     /**
      * \brief

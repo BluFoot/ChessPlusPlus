@@ -54,7 +54,7 @@ class Board
      */
     config::BoardConfig const& config;
   private:
-    std::optional<Suit_t> winner_;
+    std::optional<Players_t::const_iterator> winner_;
     Pieces_t pieces;
     Players_t players;
     Players_t::const_iterator turn;
@@ -76,7 +76,7 @@ class Board
     Board(config::BoardConfig const& conf);
 
     Suit_t turnSuit() { return turn->first; };
-    std::optional<Suit_t> winner() { return winner_; };
+    std::optional<Players_t::const_iterator> winner() { return winner_; };
     void nextTurn();
 
     /**

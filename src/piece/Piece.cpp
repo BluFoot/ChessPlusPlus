@@ -8,11 +8,12 @@ namespace chesspp
 {
 namespace piece
 {
-Piece::Piece(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t const& pc)
+Piece::Piece(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t const& pc, Score_t v)
     : board(b) //can't use {}
       , p{pos_}
       , s{s_}
-      , c{pc} {
+      , c{pc}
+      , v{v} {
     std::clog << "Creation of " << *this << std::endl;
 }
 

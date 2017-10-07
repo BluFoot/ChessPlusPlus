@@ -113,7 +113,9 @@ bool ChessPlusPlusState::moveOrCapture() {
     if (enemy == board.end() || (*enemy)->suit != (*selected)->suit) {
         if (capture() || move()) {
             if (board.winner()) {
-                app.changeState<GameOverState>(std::ref(app), std::ref(display), board.winner().value());
+                auto winner = board.winner().value();
+                app.changeState<GameOverState>(std::ref(app), std::ref(display), winner->first,
+                                               std::to_string(winner->second.score));
             }
             nextTurn();
             return true;

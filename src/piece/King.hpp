@@ -11,7 +11,7 @@ namespace piece
 class King: public virtual Piece
 {
   public:
-    King(board::Board& b, Position_t const& pos, Suit_t const& s, Class_t const& pc);
+    King(board::Board& b, Position_t const& pos, Suit_t const& s, Class_t const& pc, Score_t const& v);
 
   protected:
     virtual void calcTrajectory() override;

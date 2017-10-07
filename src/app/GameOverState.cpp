@@ -10,16 +10,15 @@ namespace app
 using Font_res = res::SfmlFileResource<sf::Font>;
 using Texture_res = res::SfmlFileResource<sf::Texture>;
 
-GameOverState::GameOverState(Application& app_,
-                             sf::RenderWindow& display_,
-                             const std::string& winner)
+GameOverState::GameOverState(Application& app_, sf::RenderWindow& display_, const std::string& winner, const std::string& score)
     : AppState(display_) //can't use {}
       , app(app_)          //can't use {}
       , menu_background{app.resourcesConfig().resources().from_config<Texture_res>("menu", "background")}
       , logo{app.resourcesConfig().resources().from_config<Texture_res>("menu", "title")}
       , font(app.resourcesConfig().resources().from_config<Font_res>("menu", "font")) //can't use {}
       , game_over_text{"Game Over!", 75}
-      , winner_text{"Winner: " + winner, 75} {
+      , winner_text{"Winner: " + winner, 75}
+      , score_text{"Score: " + score, 75} {
     //Sets position at centered horizontally, down 10% vertically
     logo.setPosition((display.getSize().x / 2) - (logo.getLocalBounds().width / 2), display.getSize().y * 0.10);
 
@@ -29,6 +28,9 @@ GameOverState::GameOverState(Application& app_,
 
     winner_text.setPosition(display.getSize().x / 2, display.getSize().y * 0.47);
     winner_text.setFont(font);
+
+    score_text.setPosition(display.getSize().x / 2, display.getSize().y * 0.59);
+    score_text.setFont(font);
 }
 
 void GameOverState::onRender() {
@@ -37,6 +39,7 @@ void GameOverState::onRender() {
     display.draw(logo);
     display.draw(game_over_text);
     display.draw(winner_text);
+    display.draw(score_text);
 }
 
 void GameOverState::onKeyPressed(sf::Keyboard::Key key, bool alt, bool control, bool shift, bool system) {
