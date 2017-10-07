@@ -17,6 +17,7 @@ class Pawn: public virtual Piece
     Pawn(board::Board& b, Position_t const& pos, Suit_t const& s, Class_t const& pc, util::Direction const& face);
 
     virtual void tick(Position_t const& p) override;
+    virtual void moveUpdate(Position_t const& from, Position_t const& to) override;
 
   protected:
     virtual void calcTrajectory() override;

@@ -69,38 +69,9 @@ void ChessPlusPlusState::onLButtonReleased(int x, int y) {
         if (selected != board.end() && (*selected)->suit != *turn) {
             selected = board.end(); //can't select enemy pieces
         }
-    } else {
-        if (find(p) == board.end() || (*find(p))->suit != (*selected)->suit)
-            [&] {
-                {
-                    auto it = std::find_if(board.pieceCapturings().begin(), board.pieceCapturings().end(),
-                                           [&](board::Board::Movements_t::value_type const& m) {
-                                               return m.first == selected && m.second == p;
-                                           });
-                    if (it != board.pieceCapturings().end()) {
-                        for (auto jt = board.pieceCapturables().begin(); jt != board.pieceCapturables().end(); ++jt) {
-                            if (jt->second == p) {
-                                if (board.capture(selected, it, jt)) {
-                                    nextTurn();
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-                {
-                    auto it = std::find_if(board.pieceTrajectories().begin(), board.pieceTrajectories().end(),
-                                           [&](board::Board::Movements_t::value_type const& m) {
-                                               return m.first == selected && m.second == p;
-                                           });
-                    if (it != board.pieceTrajectories().end()) {
-                        if (board.move(selected, it)) {
-                            nextTurn();
-                        }
-                    }
-                }
-            }();
-        //selected = board.end(); //deselect
+    } else if (find(p) == board.end() || (*find(p))->suit != (*selected)->suit) {
+        if (tryCapture() || tryMove())
+            nextTurn();
     }
 }
 
@@ -132,6 +103,32 @@ void ChessPlusPlusState::randomMove() {
             }
         }
     }
+
+    nextTurn();
 }
+
+bool ChessPlusPlusState::tryCapture() {
+    auto it = std::find_if(board.pieceCapturings().begin(), board.pieceCapturings().end(),
+                           [&](board::Board::Movements_t::value_type const& m) {
+                               return m.first == selected && m.second == p;
+                           });
+    if (it != board.pieceCapturings().end()) {
+        for (auto jt = board.pieceCapturables().begin(); jt != board.pieceCapturables().end(); ++jt) {
+            if (jt->second == p) {
+                return board.capture(selected, it, jt);
+            }
+        }
+    }
+    return false;
+}
+
+bool ChessPlusPlusState::tryMove() {
+    auto it = std::find_if(board.pieceTrajectories().begin(), board.pieceTrajectories().end(),
+                           [&](board::Board::Movements_t::value_type const& m) {
+                               return m.first == selected && m.second == p;
+                           });
+    return it != board.pieceTrajectories().end() && board.move(selected, it);
+}
+
 }
 }

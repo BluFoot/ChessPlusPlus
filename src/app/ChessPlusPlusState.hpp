@@ -78,6 +78,10 @@ class ChessPlusPlusState: public AppState
      * Selects or deselects pieces, or moves a selected piece to the clicked position.
      */
     virtual void onLButtonReleased(int x, int y) override;
+
+  private:
+    bool tryCapture();
+    bool tryMove();
 };
 }
 }

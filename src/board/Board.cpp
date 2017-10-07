@@ -92,7 +92,7 @@ bool Board::capture(Pieces_t::iterator source, Movements_t::const_iterator targe
     }
 
     pieces.erase(capturable->first);
-    std::clog << "Capture: ";
+    //std::clog << "Capture: ";
     return move(source, target); //re-use existing code
 }
 bool Board::move(Pieces_t::iterator source, Movements_t::const_iterator target) {
@@ -119,11 +119,11 @@ bool Board::move(Pieces_t::iterator source, Movements_t::const_iterator target) 
         return false;
     }
 
-    std::clog << "Moved piece at " << (*source)->pos << std::flush;
+    //std::clog << "Moved piece at " << (*source)->pos << std::flush;
     auto t = target->second;
     (*source)->move(t);
     update(t);
-    std::clog << " to " << t << std::endl;
+    //std::clog << " to " << t << std::endl;
     return true;
 }
 }

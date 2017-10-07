@@ -23,6 +23,9 @@ void Pawn::tick(Position_t const& m) {
     }
 }
 
+void Pawn::moveUpdate(const Piece::Position_t& from, const Piece::Position_t& to) {
+}
+
 void Pawn::calcTrajectory() {
     //Pawns can move 1 or 2 spaces forward on their first turn,
     //or only 1 space forward on any other turn.
