@@ -11,15 +11,12 @@ using Font_res = res::SfmlFileResource<sf::Font>;
 using Texture_res = res::SfmlFileResource<sf::Texture>;
 StartMenuState::StartMenuState(Application& app_, sf::RenderWindow& display_)
     : AppState(display_) //can't use {}
-    ,
-      app(app_)          //can't use {}
-    ,
-      menu_background{app.resourcesConfig().resources().from_config<Texture_res>("menu", "background")},
-      logo{app.resourcesConfig().resources().from_config<Texture_res>("menu", "title")},
-      font(app.resourcesConfig().resources().from_config<Font_res>("menu", "font")) //can't use {}
-    ,
-      start_text{"Start", 75},
-      quit_text{"Quit", 75} {
+      , app(app_)          //can't use {}
+      , menu_background{app.resourcesConfig().resources().from_config<Texture_res>("menu", "background")}
+      , logo{app.resourcesConfig().resources().from_config<Texture_res>("menu", "title")}
+      , font(app.resourcesConfig().resources().from_config<Font_res>("menu", "font")) //can't use {}
+      , start_text{"Start", 75}
+      , quit_text{"Quit", 75} {
     //Sets position at centered horizontally, down 10% vertically
     logo.setPosition((display.getSize().x / 2) - (logo.getLocalBounds().width / 2), display.getSize().y * 0.10);
 

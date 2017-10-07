@@ -22,8 +22,8 @@ class ResourcesConfig: public Configuration
      * Loads resource configuration from "config/chesspp/resources.json"
      */
     ResourcesConfig()
-        : Configuration{"config/" + GAME_MODE + "/resources.json"},
-          res{*this} {
+        : Configuration{"config/" + GAME_MODE + "/resources.json"}
+          , res{*this} {
     }
 
     /**

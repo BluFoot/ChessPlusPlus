@@ -6,7 +6,7 @@ namespace piece
 {
 static auto KingRegistration = board::Board::registerPieceClass("King", [](board::Board& b,
                                                                            board::Board::Position_t const& p,
-                                                                           board::Board::Suit const& s) -> board::Board::Pieces_t::value_type {
+                                                                           board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
     return board::Board::Pieces_t::value_type(new King(b, p, s, "King"));
 });
 

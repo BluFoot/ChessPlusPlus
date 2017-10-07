@@ -1,6 +1,7 @@
 #include "ChessPlusPlusState.hpp"
 
 #include "StartMenuState.hpp"
+#include "GameOverState.hpp"
 
 #include <iostream>
 
@@ -10,28 +11,16 @@ namespace app
 {
 ChessPlusPlusState::ChessPlusPlusState(Application& app_, sf::RenderWindow& disp)
     : AppState(disp)                    //can't use {}
-    ,
-      app(app_)                         //can't use {}
-    ,
-      res_config(app.resourcesConfig()) //can't use {}
-    ,
-      board_config{res_config},
-      graphics{display, res_config, board_config},
-      board{board_config},
-      players{board_config.playerList()},
-      turn{players.cbegin()} {
-    std::clog << "Number of players: " << players.size() << std::endl;
-    if (turn == players.end()) {
-        turn = players.begin();
-    }
-}
+      , app(app_)                         //can't use {}
+      , res_config(app.resourcesConfig()) //can't use {}
+      , board_config{res_config}
+      , graphics{display, res_config, board_config}
+      , board{board_config} {}
 
 void ChessPlusPlusState::nextTurn() {
     selected = board.end();
     target = {127, 127};
-    if (++turn == players.end()) {
-        turn = players.begin();
-    }
+    board.nextTurn();
 }
 
 board::Board::Pieces_t::iterator ChessPlusPlusState::find(board::Board::Position_t const& pos) const {
@@ -48,7 +37,7 @@ void ChessPlusPlusState::onRender() {
     if (board.valid(target)) {
         auto piece = find(target);
         if (piece != board.end()) {
-            graphics.drawTrajectory(**piece, (*piece)->suit != *turn);
+            graphics.drawTrajectory(**piece, (*piece)->suit != board.turnSuit());
         }
     }
 }
@@ -75,7 +64,7 @@ void ChessPlusPlusState::onLButtonReleased(int x, int y) {
 
 bool ChessPlusPlusState::waitingForUser() {
     //return false;
-    return *turn == "Red";
+    return board.turnSuit() == "Red";
 }
 
 void ChessPlusPlusState::aiMove() {
@@ -109,7 +98,7 @@ bool ChessPlusPlusState::select() {
         return false;
 
     selected = find(target); //doesn't matter if board.end(), selected won't change then
-    if (selected != board.end() && (*selected)->suit != *turn) {
+    if (selected != board.end() && (*selected)->suit != board.turnSuit()) {
         selected = board.end(); //can't select enemy pieces
     }
 
@@ -123,6 +112,9 @@ bool ChessPlusPlusState::moveOrCapture() {
     auto enemy = find(target);
     if (enemy == board.end() || (*enemy)->suit != (*selected)->suit) {
         if (capture() || move()) {
+            if (board.winner()) {
+                app.changeState<GameOverState>(std::ref(app), std::ref(display), board.winner().value());
+            }
             nextTurn();
             return true;
         }

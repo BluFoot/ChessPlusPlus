@@ -7,8 +7,8 @@ namespace piece
 const std::string Queen::qclass = "Queen";
 
 static auto QueenRegistration = board::Board::registerPieceClass(Queen::qclass, [](board::Board& b,
-                                                                             board::Board::Position_t const& p,
-                                                                             board::Board::Suit const& s) -> board::Board::Pieces_t::value_type {
+                                                                                   board::Board::Position_t const& p,
+                                                                                   board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
     return board::Board::Pieces_t::value_type(new Queen(b, p, s, Queen::qclass));
 });
 

@@ -63,8 +63,7 @@ class LogUtil
       public:
         explicit LogUtil_buffer(std::ostream& sink_, std::size_t buff_sz = 256)
             : sink(sink_) //can't use {}
-            ,
-              buffer(buff_sz + 1) //don't use {}
+              , buffer(buff_sz + 1) //don't use {}
         {
             sink.clear();
             char* base = &buffer.front();

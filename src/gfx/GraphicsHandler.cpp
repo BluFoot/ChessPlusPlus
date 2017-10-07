@@ -9,18 +9,14 @@ namespace gfx
 using Texture_res = res::SfmlFileResource<sf::Texture>;
 GraphicsHandler::GraphicsHandler(sf::RenderWindow& disp, config::ResourcesConfig& resc, config::BoardConfig& bc)
     : display(disp)         //can't use {}
-    ,
-      res_config(resc)      //can't use {}
-    ,
-      board_config(bc)      //can't use {}
-    ,
-      res(resc.resources()) //can't use {}
-    ,
-      board{res.from_config<Texture_res>("board", "board")},
-      valid_move{res.from_config<Texture_res>("board", "valid move")},
-      enemy_move{res.from_config<Texture_res>("board", "enemy move")},
-      valid_capture{res.from_config<Texture_res>("board", "valid capture")},
-      enemy_capture{res.from_config<Texture_res>("board", "enemy capture")} {
+      , res_config(resc)      //can't use {}
+      , board_config(bc)      //can't use {}
+      , res(resc.resources()) //can't use {}
+      , board{res.from_config<Texture_res>("board", "board")}
+      , valid_move{res.from_config<Texture_res>("board", "valid move")}
+      , enemy_move{res.from_config<Texture_res>("board", "enemy move")}
+      , valid_capture{res.from_config<Texture_res>("board", "valid capture")}
+      , enemy_capture{res.from_config<Texture_res>("board", "enemy capture")} {
 }
 
 void GraphicsHandler::drawBackground() {

@@ -9,7 +9,7 @@ namespace chesspp
 namespace board
 {
 Board::Board(config::BoardConfig const& conf)
-    : config(conf) //can't use {}
+    : config(conf)  //can't use {}
 {
     for (auto const& slot : conf.initialLayout()) {
         if (slot.second) {
@@ -20,6 +20,19 @@ Board::Board(config::BoardConfig const& conf)
     for (auto const& p : pieces) {
         p->makeTrajectory();
     }
+
+    for (const auto& suit : config.suits()) {
+        players.emplace(suit, PlayerDetails{});
+    }
+    turn = players.begin();
+}
+
+void Board::nextTurn() {
+    do {
+        if (++turn == players.end()) {
+            turn = players.begin();
+        }
+    } while (!turn->second.alive);
 }
 
 bool Board::occupied(Position_t const& pos) const noexcept {
@@ -93,6 +106,17 @@ bool Board::capture(Pieces_t::iterator source, Movements_t::const_iterator targe
         std::cerr << "capturable may not be captured at target" << std::endl;
     }
 
+    auto captured = capturable->first;
+    if ((*captured)->pclass == "King") {
+        players.at((*captured)->suit).alive = false;
+        std::clog << "Player " << ((*captured)->suit) << " has been eliminated" << std::endl;
+        if (1 == std::count_if(players.begin(), players.end(), [](const auto& player) { return player.second.alive; })) {
+            winner_ = std::max_element(players.begin(), players.end(), [](const auto& player1, const auto& player2) {
+                return player1.second.score < player2.second.score;
+            })->first;
+            std::clog << "Game over, winner: " << winner_.value() << std::endl;
+        }
+    }
     pieces.erase(capturable->first);
     //std::clog << "Capture: ";
     return move(source, target); //re-use existing code

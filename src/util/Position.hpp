@@ -45,8 +45,8 @@ class Position final
      * \param y_ the y coordinate of this position, or T()
      */
     Position(T x_ = T(), T y_ = T()) noexcept
-        : x{x_},
-          y{y_} {
+        : x{x_}
+          , y{y_} {
     }
     Position(Position const&) = default;
     Position(Position&&) = default;

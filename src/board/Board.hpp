@@ -3,6 +3,7 @@
 
 #include "config/BoardConfig.hpp"
 #include "util/Utilities.hpp"
+#include "PlayerDetails.h"
 
 #include <map>
 #include <set>
@@ -31,8 +32,10 @@ class Board
   public:
     using BoardSize_t = config::BoardConfig::BoardSize_t;
     using Position_t = config::BoardConfig::Position_t;
-    using Suit = config::BoardConfig::SuitClass_t;
+    using Suit_t = config::BoardConfig::SuitClass_t;
     using Pieces_t = std::set<std::unique_ptr<piece::Piece>>;
+    using Players_t = std::map<Suit_t, PlayerDetails>;
+
   private:
     struct Pieces_t_const_iterator_compare
     {
@@ -43,7 +46,7 @@ class Board
   public:
     using Movements_t = std::multimap<Pieces_t::const_iterator, Position_t, Pieces_t_const_iterator_compare>;
     using Factory_t = std::map<config::BoardConfig::PieceClass_t, std::function<
-        Pieces_t::value_type(Board&, Position_t const&, Suit const&)>>; //Used to create new pieces
+        Pieces_t::value_type(Board&, Position_t const&, Suit_t const&)>>; //Used to create new pieces
 
     /**
      * \brief
@@ -51,7 +54,10 @@ class Board
      */
     config::BoardConfig const& config;
   private:
+    std::optional<Suit_t> winner_;
     Pieces_t pieces;
+    Players_t players;
+    Players_t::const_iterator turn;
     Movements_t trajectories; //where pieces can go
     Movements_t capturings;   //where pieces can capture
     Movements_t capturables;  //where pieces can be captured
@@ -68,6 +74,10 @@ class Board
      * \param conf The BoardConfig, must outlive this instance.
      */
     Board(config::BoardConfig const& conf);
+
+    Suit_t turnSuit() { return turn->first; };
+    std::optional<Suit_t> winner() { return winner_; };
+    void nextTurn();
 
     /**
      * \brief
@@ -135,8 +145,7 @@ class Board
         Movements_t& m;
         Movements(Board& b_, Movements_t Board::*m_)
             : b(b_)     //can't use {}
-            ,
-              m(b_.*m_) //can't use {}
+              , m(b_.*m_) //can't use {}
         {
         }
         Movements(Movements const&) = delete;

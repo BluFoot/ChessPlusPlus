@@ -10,6 +10,7 @@
 #include <utility>
 #include <map>
 #include <vector>
+#include <experimental/optional>
 
 namespace chesspp
 {
@@ -27,14 +28,14 @@ class BoardConfig: public Configuration
     using Position_t = util::Position<BoardSize_t>; //Position type is based on Board Size type
     using PieceClass_t = std::string;
     using SuitClass_t = std::string;
-    using Square_t = std::optional<std::pair<PieceClass_t, SuitClass_t>>;
+    using Square_t = std::experimental::optional<std::pair<PieceClass_t, SuitClass_t>>;
     using Layout_t = std::map<Position_t, Square_t>;
     using Textures_t = std::map<BoardConfig::SuitClass_t, std::map<BoardConfig::PieceClass_t, std::string>>;
-    using Players_t = std::vector<SuitClass_t>;
+    using Suits_t = std::vector<SuitClass_t>;
 
   private:
     BoardSize_t board_width, board_height;
-    Players_t players;
+    Suits_t players;
     CellSize_t cell_width, cell_height;
     Layout_t layout;
 
@@ -50,7 +51,7 @@ class BoardConfig: public Configuration
 
     BoardSize_t boardWidth() const noexcept { return board_width; }
     BoardSize_t boardHeight() const noexcept { return board_height; }
-    Players_t playerList() const noexcept { return players; }
+    Suits_t suits() const noexcept { return players; }
     Layout_t const& initialLayout() const noexcept { return layout; }
     CellSize_t cellWidth() const noexcept { return cell_width; }
     CellSize_t cellHeight() const noexcept { return cell_height; }
