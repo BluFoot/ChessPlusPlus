@@ -56,7 +56,9 @@ class ChessPlusPlusState: public AppState
      */
     virtual void onRender() override;
 
-    virtual void randomMove() override;
+    virtual bool waitingForUser() override;
+
+    virtual void aiMove() override;
 
     /**
      * \brief
@@ -80,8 +82,10 @@ class ChessPlusPlusState: public AppState
     virtual void onLButtonReleased(int x, int y) override;
 
   private:
-    bool tryCapture();
-    bool tryMove();
+    bool select();
+    bool moveOrCapture();
+    bool capture();
+    bool move();
 };
 }
 }

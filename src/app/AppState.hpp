@@ -36,7 +36,9 @@ class AppState: public virtual SfmlEventHandler
      */
     virtual void onRender() = 0;
 
-    virtual void randomMove() = 0;
+    virtual bool waitingForUser() { return true; };
+
+    virtual void aiMove() {}
 
   protected:
     /**

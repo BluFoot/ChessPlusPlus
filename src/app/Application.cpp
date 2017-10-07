@@ -9,11 +9,13 @@ int Application::execute() {
     running = true;
     sf::Event event;
     while (running) {
-        while (display.pollEvent(event)) {
-            onEvent(event);
+        if (state->waitingForUser()) {
+            while (display.pollEvent(event)) {
+                onEvent(event);
+            }
+        } else {
+            state->aiMove();
         }
-        state->randomMove();
-        usleep(10000);
 
         state->onRender();
         display.display();
