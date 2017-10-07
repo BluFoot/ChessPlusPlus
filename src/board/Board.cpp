@@ -10,8 +10,7 @@ namespace board
 {
 Board::Board(config::BoardConfig const& conf)
     : config(conf)
-      , player_order_{conf.suits()}  //can't use {}
-{
+      , player_order_{conf.suits()} {
     for (auto const& slot : conf.initialLayout()) {
         if (slot.second) {
             pieces.emplace(factory().at(slot.second.value().first)(*this, slot.first, slot.second.value().second));
@@ -25,15 +24,25 @@ Board::Board(config::BoardConfig const& conf)
     for (const auto& suit : config.suits()) {
         players_.emplace(suit, PlayerDetails{});
     }
-    turn = player_order_.begin();
+    turn_ = player_order_.begin();
+}
+
+Board::Board(const Board& board)
+    : config{board.config}
+      , player_order_{board.player_order_}
+      , turn_{board.turn_} {}
+
+Board& Board::operator=(const Board& board) {
+    *this = Board{board};
+    return *this;
 }
 
 void Board::nextTurn() {
     do {
-        if (++turn == player_order_.end()) {
-            turn = player_order_.begin();
+        if (++turn_ == player_order_.end()) {
+            turn_ = player_order_.begin();
         }
-    } while (!players_.at(*turn).alive);
+    } while (!players_.at(*turn_).alive);
 }
 
 bool Board::occupied(Position_t const& pos) const noexcept {
@@ -50,24 +59,25 @@ auto Board::find(piece::Piece const& p) const noexcept -> Pieces_t::const_iterat
     });
 }
 
-void Board::Movements::add(piece::Piece const& p, Position_t const& tile) {
-    if (b.valid(tile)) {
-        auto it = b.find(p);
-        if (it != b.end()) {
+void Board::addMovement(piece::Piece const& p, Position_t const& tile, Movements_t& m) {
+    if (valid(tile)) {
+        auto it = find(p);
+        if (it != end()) {
             m.insert(Movements_t::value_type(it, tile));
         }
     }
 }
-void Board::Movements::remove(piece::Piece const& p, Position_t const& tile) {
-    auto it = b.find(p);
-    if (it != b.end()) {
-        auto range = m.equal_range(it);
-        for (auto jt = range.first; jt != range.second;) {
-            if (jt->second == tile) {
-                jt = m.erase(jt);
-            } else ++jt;
-        }
-    }
+
+void Board::addTrajectory(piece::Piece const& p, const Board::Position_t& tile) {
+    addMovement(p, tile, trajectories);
+}
+
+void Board::addCapturing(piece::Piece const& p, const Board::Position_t& tile) {
+    addMovement(p, tile, capturings);
+}
+
+void Board::addCapturable(piece::Piece const& p, const Board::Position_t& tile) {
+    addMovement(p, tile, capturables);
 }
 
 auto Board::pieceTrajectory(piece::Piece const& p) noexcept -> MovementsRange {

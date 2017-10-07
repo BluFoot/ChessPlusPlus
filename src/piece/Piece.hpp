@@ -113,13 +113,6 @@ class Piece
      * \param tile The position to mark.
      */
     void addTrajectory(Position_t const& tile);
-    /**
-     * \brief
-     * Unmark a position as a valid position to move to without capturing.
-     *
-     * \param tile The position to unmark.
-     */
-    void removeTrajectory(Position_t const& tile);
 
     /**
      * \brief
@@ -128,13 +121,6 @@ class Piece
      * \param tile The position to mark.
      */
     void addCapturing(Position_t const& tile);
-    /**
-     * \brief
-     * Unmark a position as a valid position to move to when capturing.
-     *
-     * \param tile The position to unmark.
-     */
-    void removeCapturing(Position_t const& tile);
 
     /**
      * \brief
@@ -143,13 +129,6 @@ class Piece
      * \param tile The position to mark.
      */
     void addCapturable(Position_t const& tile);
-    /**
-     * \brief
-     * Unmark a position as a valid position to capture this piece from.
-     *
-     * \param tile The position to mark.
-     */
-    void removeCapturable(Position_t const& tile);
 
     void transform(Class_t const& to);
 

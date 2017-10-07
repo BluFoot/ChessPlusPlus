@@ -39,7 +39,7 @@ void ChessPlusPlusState::onRender() {
     if (board.valid(target)) {
         auto piece = find(target);
         if (piece != board.end()) {
-            graphics.drawTrajectory(**piece, (*piece)->suit != board.turnSuit());
+            graphics.drawTrajectory(**piece, (*piece)->suit != board.turn());
         }
     }
 }
@@ -66,15 +66,19 @@ void ChessPlusPlusState::onLButtonReleased(int x, int y) {
 
 bool ChessPlusPlusState::waitingForUser() {
     //return false;
-    return board.turnSuit() == "Red";
+    return board.turn() == "Red";
 }
 
 void ChessPlusPlusState::aiMove() {
     std::vector<std::vector<config::BoardConfig::BoardSize_t>>
         points_vec{4, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}};
-
     for (auto& points : points_vec)
         std::shuffle(points.begin(), points.end(), gen);
+
+    std::pair<board::Board::Position_t, board::Board::Position_t> best;
+    auto starting_score = board.players().at(board.turn()).score;
+
+    auto board_copy = board;
 
     for (auto x1 : points_vec[0]) {
         for (auto y1 : points_vec[1]) {
@@ -100,7 +104,7 @@ bool ChessPlusPlusState::select() {
         return false;
 
     selected = find(target); //doesn't matter if board.end(), selected won't change then
-    if (selected != board.end() && (*selected)->suit != board.turnSuit()) {
+    if (selected != board.end() && (*selected)->suit != board.turn()) {
         selected = board.end(); //can't select enemy pieces
     }
 

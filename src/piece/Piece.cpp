@@ -18,24 +18,15 @@ Piece::Piece(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t 
 }
 
 void Piece::addTrajectory(Position_t const& tile) {
-    board.pieceTrajectories().add(*this, tile);
-}
-void Piece::removeTrajectory(Position_t const& tile) {
-    board.pieceTrajectories().remove(*this, tile);
+    board.addTrajectory(*this, tile);
 }
 
 void Piece::addCapturing(Position_t const& tile) {
-    board.pieceCapturings().add(*this, tile);
-}
-void Piece::removeCapturing(Position_t const& tile) {
-    board.pieceCapturings().remove(*this, tile);
+    board.addCapturing(*this, tile);
 }
 
 void Piece::addCapturable(Position_t const& tile) {
-    board.pieceCapturables().add(*this, tile);
-}
-void Piece::removeCapturable(Position_t const& tile) {
-    board.pieceCapturables().remove(*this, tile);
+    board.addCapturable(*this, tile);
 }
 
 void Piece::transform(const Piece::Class_t& to) {
