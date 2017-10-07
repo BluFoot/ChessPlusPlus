@@ -30,7 +30,7 @@ class ChessPlusPlusState: public AppState
     board::Board board;
 
     board::Board::Pieces_t::iterator selected = board.end();
-    board::Board::Position_t p;
+    board::Board::Position_t target;
     using Players_t = std::vector<board::Board::Suit>;
     Players_t players;
     Players_t::const_iterator turn;

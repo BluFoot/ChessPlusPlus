@@ -28,7 +28,7 @@ ChessPlusPlusState::ChessPlusPlusState(Application& app_, sf::RenderWindow& disp
 
 void ChessPlusPlusState::nextTurn() {
     selected = board.end();
-    p = {127, 127};
+    target = {127, 127};
     if (++turn == players.end()) {
         turn = players.begin();
     }
@@ -45,8 +45,8 @@ void ChessPlusPlusState::onRender() {
     if (selected != board.end()) {
         graphics.drawTrajectory(**selected);
     }
-    if (board.valid(p)) {
-        auto piece = find(p);
+    if (board.valid(target)) {
+        auto piece = find(target);
         if (piece != board.end()) {
             graphics.drawTrajectory(**piece, (*piece)->suit != *turn);
         }
@@ -59,8 +59,8 @@ void ChessPlusPlusState::onKeyPressed(sf::Keyboard::Key key, bool /*alt*/, bool 
     }
 }
 void ChessPlusPlusState::onMouseMoved(int x, int y) {
-    p.x = static_cast<board::Board::Position_t::value_type>(x / board.config.cellWidth());
-    p.y = static_cast<board::Board::Position_t::value_type>(y / board.config.cellHeight());
+    target.x = static_cast<board::Board::Position_t::value_type>(x / board.config.cellWidth());
+    target.y = static_cast<board::Board::Position_t::value_type>(y / board.config.cellHeight());
 }
 void ChessPlusPlusState::onLButtonPressed(int x, int y) {
 }
@@ -87,12 +87,12 @@ void ChessPlusPlusState::aiMove() {
 
     for (auto x1 : points_vec[0]) {
         for (auto y1 : points_vec[1]) {
-            p = {x1, y1};
+            target = {x1, y1};
             selected = board.end();
             if (select()) {
                 for (auto x2 : points_vec[2]) {
                     for (auto y2 : points_vec[3]) {
-                        p = {x2, y2};
+                        target = {x2, y2};
                         if (moveOrCapture())
                             return;
                     }
@@ -105,10 +105,10 @@ void ChessPlusPlusState::aiMove() {
 }
 
 bool ChessPlusPlusState::select() {
-    if (!board.valid(p))
+    if (!board.valid(target))
         return false;
 
-    selected = find(p); //doesn't matter if board.end(), selected won't change then
+    selected = find(target); //doesn't matter if board.end(), selected won't change then
     if (selected != board.end() && (*selected)->suit != *turn) {
         selected = board.end(); //can't select enemy pieces
     }
@@ -117,10 +117,10 @@ bool ChessPlusPlusState::select() {
 }
 
 bool ChessPlusPlusState::moveOrCapture() {
-    if (!board.valid(p))
+    if (!board.valid(target))
         return false;
 
-    auto enemy = find(p);
+    auto enemy = find(target);
     if (enemy == board.end() || (*enemy)->suit != (*selected)->suit) {
         if (capture() || move()) {
             nextTurn();
@@ -133,11 +133,11 @@ bool ChessPlusPlusState::moveOrCapture() {
 bool ChessPlusPlusState::capture() {
     auto it = std::find_if(board.pieceCapturings().begin(), board.pieceCapturings().end(),
                            [&](board::Board::Movements_t::value_type const& m) {
-                               return m.first == selected && m.second == p;
+                               return m.first == selected && m.second == target;
                            });
     if (it != board.pieceCapturings().end()) {
         for (auto jt = board.pieceCapturables().begin(); jt != board.pieceCapturables().end(); ++jt) {
-            if (jt->second == p) {
+            if (jt->second == target) {
                 return board.capture(selected, it, jt);
             }
         }
@@ -148,7 +148,7 @@ bool ChessPlusPlusState::capture() {
 bool ChessPlusPlusState::move() {
     auto it = std::find_if(board.pieceTrajectories().begin(), board.pieceTrajectories().end(),
                            [&](board::Board::Movements_t::value_type const& m) {
-                               return m.first == selected && m.second == p;
+                               return m.first == selected && m.second == target;
                            });
     return it != board.pieceTrajectories().end() && board.move(selected, it);
 }

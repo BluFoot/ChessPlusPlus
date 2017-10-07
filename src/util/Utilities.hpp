@@ -6,6 +6,13 @@
 #include <iterator>
 #include <utility>
 #include <sstream>
+#include <experimental/optional>
+
+namespace std
+{
+template<typename T>
+using optional = std::experimental::optional<T>;
+}
 
 namespace chesspp
 {
