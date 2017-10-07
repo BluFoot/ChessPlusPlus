@@ -147,6 +147,8 @@ class Piece
      */
     void removeCapturable(Position_t const& tile);
 
+    void transform(Class_t const& to);
+
   private:
     /**
      * \brief

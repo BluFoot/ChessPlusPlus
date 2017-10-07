@@ -4,10 +4,12 @@ namespace chesspp
 {
 namespace piece
 {
-static auto QueenRegistration = board::Board::registerPieceClass("Queen", [](board::Board& b,
+const std::string Queen::qclass = "Queen";
+
+static auto QueenRegistration = board::Board::registerPieceClass(Queen::qclass, [](board::Board& b,
                                                                              board::Board::Position_t const& p,
                                                                              board::Board::Suit const& s) -> board::Board::Pieces_t::value_type {
-    return board::Board::Pieces_t::value_type(new Queen(b, p, s, "Queen"));
+    return board::Board::Pieces_t::value_type(new Queen(b, p, s, Queen::qclass));
 });
 
 Queen::Queen(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t const& pc)

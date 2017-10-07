@@ -38,6 +38,10 @@ void Piece::removeCapturable(Position_t const& tile) {
     board.pieceCapturables().remove(*this, tile);
 }
 
+void Piece::transform(const Piece::Class_t& to) {
+    c = to;
+}
+
 std::ostream& operator<<(std::ostream& os, Piece const& p) {
     return os << "Piece (" << typeid(p).name() << ") \"" << p.suit << "\" \"" << p.pclass << "\" at " << p.pos << " having made "
               << p.moves << " moves";
