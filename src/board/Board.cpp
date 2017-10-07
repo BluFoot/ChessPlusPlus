@@ -9,7 +9,8 @@ namespace chesspp
 namespace board
 {
 Board::Board(config::BoardConfig const& conf)
-    : config(conf)  //can't use {}
+    : config(conf)
+      , player_order{conf.suits()}  //can't use {}
 {
     for (auto const& slot : conf.initialLayout()) {
         if (slot.second) {
@@ -24,15 +25,15 @@ Board::Board(config::BoardConfig const& conf)
     for (const auto& suit : config.suits()) {
         players.emplace(suit, PlayerDetails{});
     }
-    turn = players.begin();
+    turn = player_order.begin();
 }
 
 void Board::nextTurn() {
     do {
-        if (++turn == players.end()) {
-            turn = players.begin();
+        if (++turn == player_order.end()) {
+            turn = player_order.begin();
         }
-    } while (!turn->second.alive);
+    } while (!players.at(*turn).alive);
 }
 
 bool Board::occupied(Position_t const& pos) const noexcept {

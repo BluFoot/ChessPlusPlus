@@ -12,6 +12,7 @@
 #include <typeinfo>
 #include <algorithm>
 #include <iostream>
+#include <unordered_map>
 
 namespace chesspp
 {
@@ -33,8 +34,9 @@ class Board
     using BoardSize_t = config::BoardConfig::BoardSize_t;
     using Position_t = config::BoardConfig::Position_t;
     using Suit_t = config::BoardConfig::SuitClass_t;
+    using Suits_t = config::BoardConfig::Suits_t;
     using Pieces_t = std::set<std::unique_ptr<piece::Piece>>;
-    using Players_t = std::map<Suit_t, PlayerDetails>;
+    using Players_t = std::unordered_map<Suit_t, PlayerDetails>;
 
   private:
     struct Pieces_t_const_iterator_compare
@@ -53,14 +55,18 @@ class Board
      * The chesspp::config::BoardConfig currently in use.
      */
     config::BoardConfig const& config;
+
   private:
-    std::optional<Players_t::const_iterator> winner_;
     Pieces_t pieces;
+    Suits_t player_order;
+    Suits_t::const_iterator turn;
     Players_t players;
-    Players_t::const_iterator turn;
+    std::optional<Players_t::const_iterator> winner_;
+
     Movements_t trajectories; //where pieces can go
     Movements_t capturings;   //where pieces can capture
     Movements_t capturables;  //where pieces can be captured
+
     static Factory_t& factory() {
         static Factory_t f;
         return f;
@@ -73,9 +79,9 @@ class Board
      *
      * \param conf The BoardConfig, must outlive this instance.
      */
-    Board(config::BoardConfig const& conf);
+    explicit Board(config::BoardConfig const& conf);
 
-    Suit_t turnSuit() { return turn->first; };
+    Suit_t turnSuit() { return *turn; };
     std::optional<Players_t::const_iterator> winner() { return winner_; };
     void nextTurn();
 

@@ -1,5 +1,4 @@
 #include "Pawn.hpp"
-#include "Queen.hpp"
 
 namespace chesspp
 {
@@ -31,12 +30,12 @@ void Pawn::tick(Position_t const& m) {
 
 void Pawn::moveUpdate(const Piece::Position_t& from, const Piece::Position_t& to) {
     if ((from.x == 6 && to.x == 7) || (from.x == 9 && to.x == 8) || (from.y == 6 && to.y == 7) || (from.y == 9 && to.y == 8)) {
-        transform(Piece::Class_t{Queen::qclass});
+        transform(Piece::Class_t{"Queen"});
     }
 }
 
 void Pawn::calcTrajectory() {
-    if (pclass == Queen::qclass) {
+    if (pclass == "Queen") {
         //Queens can move infinitely in all eight directions
         using Dir = util::Direction;
         for (Dir d : {Dir::North, Dir::NorthEast, Dir::East, Dir::SouthEast, Dir::South, Dir::SouthWest, Dir::West,
