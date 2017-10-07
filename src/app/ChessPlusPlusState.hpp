@@ -30,6 +30,7 @@ class ChessPlusPlusState: public AppState
     board::Board board;
 
     board::Board::Pieces_t::iterator selected = board.end();
+    board::Board::Position_t source;
     board::Board::Position_t target;
     void nextTurn();
     board::Board::Pieces_t::iterator find(board::Board::Position_t const& pos) const;
@@ -80,9 +81,6 @@ class ChessPlusPlusState: public AppState
 
   private:
     bool select();
-    bool moveOrCapture();
-    bool capture();
-    bool move();
 };
 }
 }

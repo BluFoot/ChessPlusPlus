@@ -14,6 +14,10 @@ King::King(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t co
     : Piece{b, pos_, s_, pc, v} {
 }
 
+std::unique_ptr<Piece> King::clone() {
+    return std::make_unique<King>(*this);
+}
+
 void King::calcTrajectory() {
     //Kings can move one space in all eight directions
     using Dir = util::Direction;

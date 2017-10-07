@@ -30,11 +30,15 @@ Board::Board(config::BoardConfig const& conf)
 Board::Board(const Board& board)
     : config{board.config}
       , player_order_{board.player_order_}
-      , turn_{board.turn_} {}
-
-Board& Board::operator=(const Board& board) {
-    *this = Board{board};
-    return *this;
+      , turn_{board.turn_}
+      , players_{board.players_}
+      , winner_{board.winner_} {
+    for (const auto& piece : board.pieces) {
+        pieces.insert(piece->clone());
+    }
+    for (const auto& p : pieces) {
+        p->makeTrajectory();
+    }
 }
 
 void Board::nextTurn() {
@@ -53,8 +57,15 @@ bool Board::occupied(Position_t const& pos) const noexcept {
     }
     return false;
 }
+
+auto Board::find(Position_t const& pos) const noexcept -> Pieces_t::const_iterator {
+    return std::find_if(begin(), end(), [&](std::unique_ptr<piece::Piece> const& up) -> bool {
+        return up->pos == pos;
+    });
+}
+
 auto Board::find(piece::Piece const& p) const noexcept -> Pieces_t::const_iterator {
-    return std::find_if(std::begin(pieces), std::end(pieces), [&](Pieces_t::value_type const& v) {
+    return std::find_if(begin(), end(), [&](Pieces_t::value_type const& v) {
         return v.get() == std::addressof(p);
     });
 }
@@ -80,17 +91,19 @@ void Board::addCapturable(piece::Piece const& p, const Board::Position_t& tile) 
     addMovement(p, tile, capturables);
 }
 
-auto Board::pieceTrajectory(piece::Piece const& p) noexcept -> MovementsRange {
+auto Board::pieceMovement(piece::Piece const& p, Movements_t& m) const noexcept -> MovementsRange {
     auto range = trajectories.equal_range(find(p));
     return {{range.first, range.second}};
 }
+
+auto Board::pieceTrajectory(piece::Piece const& p) noexcept -> MovementsRange {
+    return pieceMovement(p, trajectories);
+}
 auto Board::pieceCapturing(piece::Piece const& p) noexcept -> MovementsRange {
-    auto range = capturings.equal_range(find(p));
-    return {{range.first, range.second}};
+    return pieceMovement(p, capturings);
 }
 auto Board::pieceCapturable(piece::Piece const& p) noexcept -> MovementsRange {
-    auto range = capturables.equal_range(find(p));
-    return {{range.first, range.second}};
+    return pieceMovement(p, capturables);
 }
 
 void Board::update(Position_t const& pos) {
@@ -103,22 +116,64 @@ void Board::update(Position_t const& pos) {
     }
 }
 
-bool Board::capture(Pieces_t::iterator source, Movements_t::const_iterator target, Movements_t::const_iterator capturable) {
-    if (source == pieces.end()) {
-        std::cerr << "source iterator of piece to capture with is invalid" << std::endl;
+bool Board::input(Position_t const& from, Position_t const& to) {
+    std::clog << "Board::input " << from << " to " << to << std::endl;
+
+    if (!valid(from)) {
+        std::cerr << "invalid source position" << std::endl;
         return false;
     }
-    if (source != target->first) {
-        std::cerr << "target iterator does not match source iterator, source{" << **source << "}, target {" << **(target->first)
-                  << "}" << std::endl;
+
+    if (!valid(to)) {
+        std::cerr << "invalid target position" << std::endl;
         return false;
     }
-    if (capturable->second != target->second) {
-        std::cerr << "capturable may not be captured at target" << std::endl;
+
+    auto piece = find(from);
+    if (piece == end()) {
+        std::cerr << "no piece found at source position" << std::endl;
+        return false;
+    }
+
+    if ((*piece)->suit != *turn_) {
+        std::cerr << "can't move a piece that doesn't to you" << std::endl;
+        return false;
+    }
+
+    auto enemy = find(to);
+    if (enemy == end()) {
+        return move(piece, to);
+    } else {
+        return capture(piece, enemy);
+    }
+}
+
+bool Board::capture(Pieces_t::iterator piece, Pieces_t::iterator enemy) {
+    if ((*enemy)->suit == (*piece)->suit) {
+        std::cerr << "can't capture your own piece" << std::endl;
+        return false;
+    }
+
+    auto capturing = std::find_if(capturings.begin(), capturings.end(), [&](board::Board::Movements_t::value_type const& m) {
+        return m.first == piece && m.second == (*enemy)->pos;
+    });
+
+    if (capturing == capturings.end()) {
+        std::cerr << "can't capture in that direction" << std::endl;
+        return false;
+    }
+
+    auto capturable = std::find_if(capturables.begin(), capturables.end(), [&](board::Board::Movements_t::value_type const& m) {
+        return m.first == enemy && m.second == (*enemy)->pos;
+    });
+
+    if (capturable == capturables.end()) {
+        std::cerr << "can't capture in that direction" << std::endl;
+        return false;
     }
 
     auto captured = capturable->first;
-    players_.at((*source)->suit).score += (*captured)->value;
+    players_.at((*piece)->suit).score += (*captured)->value;
     if ((*captured)->pclass == "King") {
         players_.at((*captured)->suit).alive = false;
         std::clog << "Player " << ((*captured)->suit) << " has been eliminated" << std::endl;
@@ -129,41 +184,37 @@ bool Board::capture(Pieces_t::iterator source, Movements_t::const_iterator targe
             std::clog << "Game over, winner: " << winner_.value()->first << std::endl;
         }
     }
-    pieces.erase(capturable->first);
-    //std::clog << "Capture: ";
-    return move(source, target); //re-use existing code
+
+    pieces.erase(enemy);
+    std::clog << "Capture: from " << (*enemy)->pos;
+    (*piece)->move((*enemy)->pos);
+    update((*enemy)->pos);
+    std::clog << " to " << (*enemy)->pos << std::endl;
+    return true;
 }
-bool Board::move(Pieces_t::iterator source, Movements_t::const_iterator target) {
-    if (source == pieces.end()) {
-        std::cerr << "source iterator of piece to move is invalid" << std::endl;
-        return false;
-    }
-    if (target == trajectories.end() && target == capturings.end()) {
-        std::cerr << "target iterator of piece to move to is invalid" << std::endl;
-        return false;
-    }
-    if (source != target->first) {
-        std::cerr << "target iterator does not match source iterator, source{" << **source << "}, target {" << **(target->first)
-                  << "}" << std::endl;
-        return false;
-    }
-    if (occupied(target->second)) {
-        std::cerr << "target iterator to move to is occupied:" << std::endl;
-        for (auto& p : pieces) {
-            if (p->pos == target->second) {
-                std::cerr << "\t" << *p << std::endl;
-            }
-        }
+
+bool Board::move(Pieces_t::iterator piece, Position_t const& to) {
+    if (occupied(to)) {
+        std::cerr << "target position occupied" << std::endl;
         return false;
     }
 
-    //std::clog << "Moved piece at " << (*source)->pos << std::flush;
-    auto t = target->second;
-    (*source)->move(t);
-    update(t);
-    //std::clog << " to " << t << std::endl;
+    auto target = std::find_if(trajectories.begin(), trajectories.end(), [&](board::Board::Movements_t::value_type const& m) {
+        return m.first == piece && m.second == to;
+    });
+
+    if (target == trajectories.end()) {
+        std::cerr << "can't move that piece in that direction" << std::endl;
+        return false;
+    }
+
+    std::clog << "Moved piece at " << (*piece)->pos << std::flush;
+    (*piece)->move(to);
+    update(to);
+    std::clog << " to " << to << std::endl;
     return true;
 }
+
 bool Board::valid(const Board::Position_t& pos) const noexcept {
     return config.initialLayout().find(pos) != config.initialLayout().end()
         && pos.isWithin(Position_t::Origin(), {config.boardWidth(), config.boardHeight()});

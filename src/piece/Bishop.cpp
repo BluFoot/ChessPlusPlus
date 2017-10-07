@@ -14,6 +14,10 @@ Bishop::Bishop(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_
     : Piece{b, pos_, s_, pc, v} {
 }
 
+std::unique_ptr<Piece> Bishop::clone() {
+    return std::make_unique<Bishop>(*this);
+}
+
 void Bishop::calcTrajectory() {
     //Bishops can move infinitely in the four diagonal directions
     using Dir = util::Direction;

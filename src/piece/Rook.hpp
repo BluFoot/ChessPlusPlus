@@ -12,6 +12,7 @@ class Rook: public virtual Piece
 {
   public:
     Rook(board::Board& b, Position_t const& pos, Suit_t const& s, Class_t const& pc, Score_t const& v);
+    virtual std::unique_ptr<Piece> clone() override;
 
   protected:
     virtual void calcTrajectory() override;

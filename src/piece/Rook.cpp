@@ -14,6 +14,10 @@ Rook::Rook(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t co
     : Piece{b, pos_, s_, pc, v} {
 }
 
+std::unique_ptr<Piece> Rook::clone() {
+    return std::make_unique<Rook>(*this);
+}
+
 void Rook::calcTrajectory() {
     //Rooks can move infinitely in the four straight directions
     using Dir = util::Direction;

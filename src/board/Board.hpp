@@ -22,6 +22,7 @@ class Piece;
 }
 namespace board
 {
+
 class Board
 {
   public:
@@ -65,7 +66,6 @@ class Board
   public:
     explicit Board(config::BoardConfig const& conf);
     Board(const Board& board);
-    Board& operator=(const Board& board);
 
     Suit_t turn() const { return *turn_; };
     Suits_t const& player_order() const { return player_order_; }
@@ -79,6 +79,7 @@ class Board
     }
 
     bool occupied(Position_t const& pos) const noexcept;
+    auto find(Position_t const& pos) const noexcept -> Pieces_t::const_iterator;
     auto find(piece::Piece const& p) const noexcept -> Pieces_t::const_iterator;
     auto begin() const noexcept -> Pieces_t::const_iterator {
         return pieces.cbegin();
@@ -86,9 +87,6 @@ class Board
     auto end() const noexcept -> Pieces_t::const_iterator {
         return pieces.cend();
     }
-
-  private:
-    void addMovement(piece::Piece const& p, Position_t const& tile, Movements_t& m);
 
   public:
     void addTrajectory(piece::Piece const& p, Position_t const& tile);
@@ -105,12 +103,18 @@ class Board
     MovementsRange pieceCapturable(piece::Piece const& p) noexcept;
 
   private:
+    void addMovement(piece::Piece const& p, Position_t const& tile, Movements_t& m);
+    auto pieceMovement(piece::Piece const& p, Movements_t& m) const noexcept -> MovementsRange;
+
     void update(Position_t const& pos);
 
   public:
-    bool capture(Pieces_t::iterator source, Movements_t::const_iterator target, Movements_t::const_iterator capturable);
-    bool move(Pieces_t::iterator source, Movements_t::const_iterator target);
+    bool input(Position_t const& from, Position_t const& to);
     bool valid(Position_t const& pos) const noexcept;
+
+  private:
+    bool capture(Pieces_t::iterator piece, Pieces_t::iterator enemy);
+    bool move(Pieces_t::iterator piece, Position_t const& to);
 };
 }
 }

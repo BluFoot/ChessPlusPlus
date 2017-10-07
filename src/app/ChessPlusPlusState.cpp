@@ -57,45 +57,62 @@ void ChessPlusPlusState::onLButtonPressed(int x, int y) {
 }
 void ChessPlusPlusState::onLButtonReleased(int x, int y) {
     if (selected == board.end()) {
-        select();
+        if (select())
+            source = target;
     } else {
-        if (!moveOrCapture())
+        if (board.input(source, target)) {
+            nextTurn();
+        } else {
             selected = board.end();
+        }
     }
 }
 
 bool ChessPlusPlusState::waitingForUser() {
-    //return false;
-    return board.turn() == "Red";
+    return false;
+    //return board.turn() == "Red";
 }
 
 void ChessPlusPlusState::aiMove() {
     std::vector<std::vector<config::BoardConfig::BoardSize_t>>
         points_vec{4, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}};
-    for (auto& points : points_vec)
-        std::shuffle(points.begin(), points.end(), gen);
+    //for (auto& points : points_vec)
+    //    std::shuffle(points.begin(), points.end(), gen);
 
-    std::pair<board::Board::Position_t, board::Board::Position_t> best;
+    std::pair<board::Board::Position_t, board::Board::Position_t> best_move;
+    int best_score = -1;
     auto starting_score = board.players().at(board.turn()).score;
-
-    auto board_copy = board;
 
     for (auto x1 : points_vec[0]) {
         for (auto y1 : points_vec[1]) {
-            target = {x1, y1};
-            selected = board.end();
-            if (select()) {
-                for (auto x2 : points_vec[2]) {
-                    for (auto y2 : points_vec[3]) {
-                        target = {x2, y2};
-                        if (moveOrCapture())
-                            return;
+            board::Board::Position_t from{x1, y1};
+            if (!board.valid(from))
+                continue;
+            auto piece = find(from);
+            if (piece == board.end() || (*piece)->suit != board.turn())
+                continue;
+
+            for (auto x2 : points_vec[2]) {
+                for (auto y2 : points_vec[3]) {
+                    board::Board::Position_t to{x2, y2};
+                    if (!board.valid(to))
+                        continue;
+
+                    board::Board board_copy{board};
+                    if (board_copy.input(from, to)) {
+                        auto score = board_copy.players().at(board_copy.turn()).score;
+                        std::clog << (score - starting_score) << std::endl;
+                        if (score - starting_score > best_score) {
+                            best_move = {source, target};
+                        }
                     }
                 }
             }
         }
     }
 
+    std::clog << "best move: " << best_move.first << " to " << best_move.second << std::endl;
+    board.input(best_move.first, best_move.second);
     nextTurn();
 }
 
@@ -109,49 +126,6 @@ bool ChessPlusPlusState::select() {
     }
 
     return selected != board.end();
-}
-
-bool ChessPlusPlusState::moveOrCapture() {
-    if (!board.valid(target))
-        return false;
-
-    auto enemy = find(target);
-    if (enemy == board.end() || (*enemy)->suit != (*selected)->suit) {
-        if (capture() || move()) {
-            if (board.winner()) {
-                auto winner = board.winner().value();
-                app.changeState<GameOverState>(std::ref(app), std::ref(display), winner->first,
-                                               std::to_string(winner->second.score));
-            } else {
-                nextTurn();
-            }
-            return true;
-        }
-    }
-    return false;
-}
-
-bool ChessPlusPlusState::capture() {
-    auto it = std::find_if(board.pieceCapturings().begin(), board.pieceCapturings().end(),
-                           [&](board::Board::Movements_t::value_type const& m) {
-                               return m.first == selected && m.second == target;
-                           });
-    if (it != board.pieceCapturings().end()) {
-        for (auto jt = board.pieceCapturables().begin(); jt != board.pieceCapturables().end(); ++jt) {
-            if (jt->second == target) {
-                return board.capture(selected, it, jt);
-            }
-        }
-    }
-    return false;
-}
-
-bool ChessPlusPlusState::move() {
-    auto it = std::find_if(board.pieceTrajectories().begin(), board.pieceTrajectories().end(),
-                           [&](board::Board::Movements_t::value_type const& m) {
-                               return m.first == selected && m.second == target;
-                           });
-    return it != board.pieceTrajectories().end() && board.move(selected, it);
 }
 
 }

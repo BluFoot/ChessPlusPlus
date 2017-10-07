@@ -14,6 +14,10 @@ Queen::Queen(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t 
     : Piece{b, pos_, s_, pc, v} {
 }
 
+std::unique_ptr<Piece> Queen::clone() {
+    return std::make_unique<Queen>(*this);
+}
+
 void Queen::calcTrajectory() {
     //Queens can move infinitely in all eight directions
     using Dir = util::Direction;

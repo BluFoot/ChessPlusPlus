@@ -22,6 +22,10 @@ Pawn::Pawn(board::Board& b,
       , facing{face} {
 }
 
+std::unique_ptr<Piece> Pawn::clone() {
+    return std::make_unique<Pawn>(*this);
+}
+
 void Pawn::tick(Position_t const& m) {
     if (moves == 1 && m != pos) { //moved just happened, en passant no longer allowed
         en_passant = false;

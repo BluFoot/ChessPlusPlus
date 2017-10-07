@@ -18,6 +18,10 @@ Knight::Knight(board::Board& b,
     : Piece{b, pos_, s_, pc, v} {
 }
 
+std::unique_ptr<Piece> Knight::clone() {
+    return std::make_unique<Knight>(*this);
+}
+
 void Knight::calcTrajectory() {
     //Knights can only move in 3-long 2-short L shapes
 
