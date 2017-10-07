@@ -9,6 +9,8 @@ namespace chesspp
 {
 namespace app
 {
+using Font_res = res::SfmlFileResource<sf::Font>;
+
 ChessPlusPlusState::ChessPlusPlusState(Application& app_, sf::RenderWindow& disp)
     : AppState(disp)                    //can't use {}
       , app(app_)                         //can't use {}

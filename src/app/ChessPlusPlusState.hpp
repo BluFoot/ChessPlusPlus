@@ -1,7 +1,7 @@
 #ifndef chesspp_app_ChessPlusPlusState_HeaderPlusPlus
 #define chesspp_app_ChessPlusPlusState_HeaderPlusPlus
 
-#include "gfx/GraphicsHandler.hpp"
+#include "GraphicsHandler.hpp"
 #include "board/Board.hpp"
 
 #include "AppState.hpp"
@@ -26,7 +26,7 @@ class ChessPlusPlusState: public AppState
     Application& app;
     config::ResourcesConfig& res_config;
     config::BoardConfig board_config;
-    gfx::GraphicsHandler graphics;
+    GraphicsHandler graphics;
     board::Board board;
 
     board::Board::Pieces_t::iterator selected = board.end();

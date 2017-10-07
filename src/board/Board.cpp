@@ -10,7 +10,7 @@ namespace board
 {
 Board::Board(config::BoardConfig const& conf)
     : config(conf)
-      , player_order{conf.suits()}  //can't use {}
+      , player_order_{conf.suits()}  //can't use {}
 {
     for (auto const& slot : conf.initialLayout()) {
         if (slot.second) {
@@ -23,17 +23,17 @@ Board::Board(config::BoardConfig const& conf)
     }
 
     for (const auto& suit : config.suits()) {
-        players.emplace(suit, PlayerDetails{});
+        players_.emplace(suit, PlayerDetails{});
     }
-    turn = player_order.begin();
+    turn = player_order_.begin();
 }
 
 void Board::nextTurn() {
     do {
-        if (++turn == player_order.end()) {
-            turn = player_order.begin();
+        if (++turn == player_order_.end()) {
+            turn = player_order_.begin();
         }
-    } while (!players.at(*turn).alive);
+    } while (!players_.at(*turn).alive);
 }
 
 bool Board::occupied(Position_t const& pos) const noexcept {
@@ -108,12 +108,12 @@ bool Board::capture(Pieces_t::iterator source, Movements_t::const_iterator targe
     }
 
     auto captured = capturable->first;
-    players.at((*source)->suit).score += (*captured)->value;
+    players_.at((*source)->suit).score += (*captured)->value;
     if ((*captured)->pclass == "King") {
-        players.at((*captured)->suit).alive = false;
+        players_.at((*captured)->suit).alive = false;
         std::clog << "Player " << ((*captured)->suit) << " has been eliminated" << std::endl;
-        if (1 == std::count_if(players.begin(), players.end(), [](const auto& player) { return player.second.alive; })) {
-            winner_ = std::max_element(players.begin(), players.end(), [](const auto& player1, const auto& player2) {
+        if (1 == std::count_if(players_.begin(), players_.end(), [](const auto& player) { return player.second.alive; })) {
+            winner_ = std::max_element(players_.begin(), players_.end(), [](const auto& player1, const auto& player2) {
                 return player1.second.score < player2.second.score;
             });
             std::clog << "Game over, winner: " << winner_.value()->first << std::endl;

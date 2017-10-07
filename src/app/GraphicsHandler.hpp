@@ -6,12 +6,13 @@
 #include "config/BoardConfig.hpp"
 #include "board/Board.hpp"
 #include "piece/Piece.hpp"
+#include "app/Button.hpp"
 
 #include <map>
 
 namespace chesspp
 {
-namespace gfx
+namespace app
 {
 /**
  * \brief
@@ -26,6 +27,9 @@ class GraphicsHandler
 
     sf::Sprite board, valid_move, enemy_move, valid_capture, enemy_capture;
 
+    sf::Font font;
+    sf::Text scores;
+
   public:
     /**
      * \brief
@@ -36,7 +40,9 @@ class GraphicsHandler
      * \param resc The chesspp::config::ResourcesConfig, must outlive this instance.
      * \param bc The chesspp::config::BoardConfig, must outlive this instance.
      */
-    GraphicsHandler(sf::RenderWindow& display, config::ResourcesConfig& resc, config::BoardConfig& bc);
+    GraphicsHandler(sf::RenderWindow& display,
+                    config::ResourcesConfig& resc,
+                    config::BoardConfig& bc);
 
     /**
      * \brief

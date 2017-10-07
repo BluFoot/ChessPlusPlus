@@ -7,9 +7,6 @@ namespace chesspp
 {
 namespace app
 {
-using Font_res = res::SfmlFileResource<sf::Font>;
-using Texture_res = res::SfmlFileResource<sf::Texture>;
-
 GameOverState::GameOverState(Application& app_, sf::RenderWindow& display_, const std::string& winner, const std::string& score)
     : AppState(display_) //can't use {}
       , app(app_)          //can't use {}

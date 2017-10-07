@@ -58,9 +58,9 @@ class Board
 
   private:
     Pieces_t pieces;
-    Suits_t player_order;
+    Suits_t player_order_;
     Suits_t::const_iterator turn;
-    Players_t players;
+    Players_t players_;
     std::optional<Players_t::const_iterator> winner_;
 
     Movements_t trajectories; //where pieces can go
@@ -81,8 +81,11 @@ class Board
      */
     explicit Board(config::BoardConfig const& conf);
 
-    Suit_t turnSuit() { return *turn; };
-    std::optional<Players_t::const_iterator> winner() { return winner_; };
+    Suit_t turnSuit() const { return *turn; };
+    Suits_t const& player_order() const { return player_order_; }
+    Players_t const& players() const { return players_; }
+    std::optional<Players_t::const_iterator> winner() const { return winner_; };
+
     void nextTurn();
 
     /**

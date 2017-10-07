@@ -1,13 +1,15 @@
 #include "GraphicsHandler.hpp"
 
 #include "res/SfmlFileResource.hpp"
+#include "AppState.hpp"
 
 namespace chesspp
 {
-namespace gfx
+namespace app
 {
-using Texture_res = res::SfmlFileResource<sf::Texture>;
-GraphicsHandler::GraphicsHandler(sf::RenderWindow& disp, config::ResourcesConfig& resc, config::BoardConfig& bc)
+GraphicsHandler::GraphicsHandler(sf::RenderWindow& disp,
+                                 config::ResourcesConfig& resc,
+                                 config::BoardConfig& bc)
     : display(disp)         //can't use {}
       , res_config(resc)      //can't use {}
       , board_config(bc)      //can't use {}
@@ -16,7 +18,13 @@ GraphicsHandler::GraphicsHandler(sf::RenderWindow& disp, config::ResourcesConfig
       , valid_move{res.from_config<Texture_res>("board", "valid move")}
       , enemy_move{res.from_config<Texture_res>("board", "enemy move")}
       , valid_capture{res.from_config<Texture_res>("board", "valid capture")}
-      , enemy_capture{res.from_config<Texture_res>("board", "enemy capture")} {
+      , enemy_capture{res.from_config<Texture_res>("board", "enemy capture")}
+      , font{res.from_config<Font_res>("menu", "font")} {
+    scores.setCharacterSize(35);
+    scores.setStyle(sf::Text::Bold);
+    scores.setPosition(0, 0);
+    scores.setFont(font);
+    scores.setColor(sf::Color::White);
 }
 
 void GraphicsHandler::drawBackground() {
@@ -69,11 +77,23 @@ void GraphicsHandler::drawTrajectory(piece::Piece const& p, bool enemy) {
     }
 }
 void GraphicsHandler::drawBoard(board::Board const& b) {
+    display.clear();
+
     drawBackground();
 
     for (auto const& pp : b) {
         drawPiece(*pp);
     }
+
+    std::string scores_text;
+    for (const auto& suit : b.player_order()) {
+        scores_text += suit;
+        scores_text += ": ";
+        scores_text += std::to_string(b.players().at(suit).score);
+        scores_text += "\n";
+    }
+    scores.setString(scores_text);
+    display.draw(scores);
 }
 }
 }

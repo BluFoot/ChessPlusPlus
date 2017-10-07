@@ -7,8 +7,6 @@ namespace chesspp
 {
 namespace app
 {
-using Font_res = res::SfmlFileResource<sf::Font>;
-using Texture_res = res::SfmlFileResource<sf::Texture>;
 StartMenuState::StartMenuState(Application& app_, sf::RenderWindow& display_)
     : AppState(display_) //can't use {}
       , app(app_)          //can't use {}

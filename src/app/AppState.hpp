@@ -3,11 +3,15 @@
 
 #include "SFML.hpp"
 #include "SfmlEventHandler.hpp"
+#include "res/SfmlFileResource.hpp"
 
 namespace chesspp
 {
 namespace app
 {
+using Font_res = res::SfmlFileResource<sf::Font>;
+using Texture_res = res::SfmlFileResource<sf::Texture>;
+
 /**
  * \brief
  * Base class for application states.
