@@ -12,7 +12,9 @@ Board::Board(config::BoardConfig const& conf)
     : config(conf) //can't use {}
 {
     for (auto const& slot : conf.initialLayout()) {
-        pieces.emplace(factory().at(slot.second.first)(*this, slot.first, slot.second.second));
+        if (slot.second) {
+            pieces.emplace(factory().at(slot.second.value().first)(*this, slot.first, slot.second.value().second));
+        }
     }
 
     for (auto const& p : pieces) {
@@ -125,6 +127,10 @@ bool Board::move(Pieces_t::iterator source, Movements_t::const_iterator target) 
     update(t);
     //std::clog << " to " << t << std::endl;
     return true;
+}
+bool Board::valid(const Board::Position_t& pos) const noexcept {
+    return config.initialLayout().find(pos) != config.initialLayout().end()
+        && pos.isWithin(Position_t::Origin(), {config.boardWidth(), config.boardHeight()});
 }
 }
 }

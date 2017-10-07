@@ -6,22 +6,22 @@
     "players": ["Red", "Blue", "Yellow", "Green"],
     "pieces":
     [
-      [null    , null    , null    , null   , "Rook", "Knight", "Bishop", "King", "Queen", "Bishop", "Knight", "Rook", null  , null    , null    , null    ],
-      [null    , null    , null    , null   , "Pawn", "Pawn"  , "Pawn"  , "Pawn" , "Pawn", "Pawn"  , "Pawn"  , "Pawn", null  , null    , null    , null    ],
-      [null    , null    , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , null    , null    ],
-      [null    , null    , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , null    , null    ],
-      ["Rook"  , "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Rook"  ],
-      ["Knight", "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Knight"],
-      ["Bishop", "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Bishop"],
-      ["King"  , "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Queen" ],
-      ["Queen" , "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "King"  ],
-      ["Bishop", "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Bishop"],
-      ["Knight", "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Knight"],
-      ["Rook"  , "Pawn"  , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , "Pawn"  , "Rook"  ],
-      [null    , null    , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , null    , null    ],
-      [null    , null    , null    , null   , null  , null    , null    , null   , null  , null    , null    , null  , null  , null    , null    , null    ],
-      [null    , null    , null    , null   , "Pawn", "Pawn"  , "Pawn"  , "Pawn" , "Pawn", "Pawn"  , "Pawn"  , "Pawn", null  , null    , null    , null    ],
-      [null    , null    , null    , null   , "Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook", null  , null    , null    , null    ]
+      [ null    , null    , null    , null   , "Rook" , "Knight", "Bishop", "King" , "Queen", "Bishop", "Knight", "Rook" , null   , null   , null    , null    ],
+      [ null    , null    , null    , null   , "Pawn" , "Pawn"  , "Pawn"  , "Pawn" , "Pawn" , "Pawn"  , "Pawn"  , "Pawn" , null   , null   , null    , null    ],
+      [ null    , null    , null    , null   , "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", null   , null   , null    , null    ],
+      [ null    , null    , null    , null   , "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", null   , null   , null    , null    ],
+      [ "Rook"  , "Pawn"  , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty", "Pawn"  , "Rook"  ],
+      [ "Knight", "Pawn"  , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty", "Pawn"  , "Knight"],
+      [ "Bishop", "Pawn"  , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty", "Pawn"  , "Bishop"],
+      [ "King"  , "Pawn"  , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty", "Pawn"  , "Queen" ],
+      [ "Queen" , "Pawn"  , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty", "Pawn"  , "King"  ],
+      [ "Bishop", "Pawn"  , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty", "Pawn"  , "Bishop"],
+      [ "Knight", "Pawn"  , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty", "Pawn"  , "Knight"],
+      [ "Rook"  , "Pawn"  , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty", "Pawn"  , "Rook"  ],
+      [ null    , null    , null    , null   , "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", null   , null   , null    , null    ],
+      [ null    , null    , null    , null   , "Empty", "Empty" , "Empty" , "Empty", "Empty", "Empty" , "Empty" , "Empty", null   , null   , null    , null    ],
+      [ null    , null    , null    , null   , "Pawn" , "Pawn"  , "Pawn"  , "Pawn" , "Pawn" , "Pawn"  , "Pawn"  , "Pawn" , null   , null   , null    , null    ],
+      [ null    , null    , null    , null   , "Rook" , "Knight", "Bishop", "Queen", "King" , "Bishop", "Knight", "Rook" , null   , null   , null    , null    ]
     ],
     "suits":
     [

@@ -10,6 +10,7 @@
 #include <functional>
 #include <typeinfo>
 #include <algorithm>
+#include <iostream>
 
 namespace chesspp
 {
@@ -217,9 +218,7 @@ class Board
      * \param pos The position to check for validity.
      * \return true if the position is valid, false otherwise.
      */
-    bool valid(Position_t const& pos) const noexcept {
-        return pos.isWithin(Position_t::Origin(), {config.boardWidth(), config.boardHeight()});
-    }
+    bool valid(Position_t const& pos) const noexcept;
 };
 }
 }

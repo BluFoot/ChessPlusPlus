@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.7)
 
 project(ChessPlusPlus)
 
@@ -81,7 +81,7 @@ if(NOT APPLE OR NOT BUILD_APPBUNDLE)
 		)
 	endif()
 endif()
-set_property(TARGET ChessPlusPlus PROPERTY CXX_STANDARD 14)
+set_property(TARGET ChessPlusPlus PROPERTY CXX_STANDARD 17)
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	if(APPLE)
 		# Building with Clang (on OS x at least) requires -stdlib=libc++ flag

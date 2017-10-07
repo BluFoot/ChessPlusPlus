@@ -10,6 +10,7 @@
 #include <utility>
 #include <map>
 #include <vector>
+#include <experimental/optional>
 
 namespace chesspp
 {
@@ -27,9 +28,11 @@ class BoardConfig: public Configuration
     using Position_t = util::Position<BoardSize_t>; //Position type is based on Board Size type
     using PieceClass_t = std::string;
     using SuitClass_t = std::string;
-    using Layout_t = std::map<Position_t, std::pair<PieceClass_t, SuitClass_t>>;
+    using Square_t = std::experimental::optional<std::pair<PieceClass_t, SuitClass_t>>;
+    using Layout_t = std::map<Position_t, Square_t>;
     using Textures_t = std::map<BoardConfig::SuitClass_t, std::map<BoardConfig::PieceClass_t, std::string>>;
     using Players_t = std::vector<SuitClass_t>;
+
   private:
     BoardSize_t board_width, board_height;
     Players_t players;
