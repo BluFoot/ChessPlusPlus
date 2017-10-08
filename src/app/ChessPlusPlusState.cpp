@@ -50,13 +50,12 @@ void ChessPlusPlusState::onLButtonPressed(int x, int y) {
 }
 void ChessPlusPlusState::onLButtonReleased(int x, int y) {
     if (selected == board.end()) {
-        if (select())
-            source = target;
+        select();
     } else {
-        if (board.input(source, target)) {
+        if (board.input((*selected)->pos, target)) {
             nextTurn();
         } else {
-            selected = board.end();
+            select();
         }
     }
 }
@@ -67,87 +66,74 @@ bool ChessPlusPlusState::waitingForUser() {
 }
 
 void ChessPlusPlusState::aiMove() {
-    std::vector<std::vector<config::BoardConfig::BoardSize_t>>
-        points_vec{4, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}};
-    //for (auto& points : points_vec)
-    //    std::shuffle(points.begin(), points.end(), gen);
-
+    bool best_is_move = true;
+    int best_diff = -1;
     std::pair<board::Board::Position_t, board::Board::Position_t> best_move;
-    int best_score = -1;
     auto starting_score = board.players().at(board.turn()).score;
+    auto turn = board.turn();
 
-    for (auto x1 : points_vec[0]) {
-        for (auto y1 : points_vec[1]) {
-            board::Board::Position_t from{x1, y1};
-            if (!board.valid(from))
+    for (auto piece = board.begin(); piece != board.end(); ++piece) {
+        if ((*piece)->suit != board.turn())
+            continue;
+
+        auto trajectories = board.pieceTrajectory(**piece);
+        for (auto const& trajectory : trajectories) {
+            if (board.occupied(trajectory.second))
                 continue;
-            auto piece = board.find(from);
-            if (piece == board.end() || (*piece)->suit != board.turn())
+
+            auto from = (*piece)->pos;
+            auto to = trajectory.second;
+            board::Board board_copy{board};
+            if (board_copy.moveQuick(from, to)) {
+                auto score = board_copy.players().at(turn).score;
+                if (score - starting_score > best_diff) {
+                    best_is_move = true;
+                    best_diff = score - starting_score;
+                    best_move = {from, to};
+                }
+            }
+        }
+
+        auto capturings = board.pieceCapturing(**piece);
+        for (auto const& capturing : capturings) {
+            auto enemy = board.find(capturing.second);
+            if (enemy == board.end() || (*piece)->suit == (*enemy)->suit)
                 continue;
 
-            for (auto x2 : points_vec[2]) {
-                for (auto y2 : points_vec[3]) {
-                    board::Board::Position_t to{x2, y2};
-                    if (!board.valid(to))
-                        continue;
+            auto capturables = board.pieceCapturable(**enemy);
+            auto capturable = std::find_if(capturables.begin(), capturables.end(), [&](auto const& capturable_) {
+                return capturable_.first == enemy && capturable_.second == (*enemy)->pos;
+            });
+            if (capturable == capturables.end())
+                continue;
 
-                    auto enemy = board.find(to);
-                    if (enemy == board.end()) { // move
-                        auto trajectories = board.pieceTrajectory(**piece);
-                        auto target = std::find_if(trajectories.begin(), trajectories.end(), [&](auto const& m) {
-                            return m.second == to;
-                        });
-                        if (target == trajectories.end())
-                            continue;
-                    } else { // capture
-                        if ((*enemy)->suit == (*piece)->suit)
-                            continue;
-
-                        auto capturings = board.pieceCapturing(**piece);
-                        auto capturing = std::find_if(capturings.begin(), capturings.end(), [&](auto const& m) {
-                            return m.second == to;
-                        });
-                        if (capturing == capturings.end())
-                            continue;
-
-                        auto capturables = board.pieceCapturable(**enemy);
-                        auto capturable = std::find_if(capturables.begin(), capturables.end(), [&](auto const& m) {
-                            return m.second == to;
-                        });
-                        if (capturable == capturables.end())
-                            continue;
-                    }
-
-                    board::Board board_copy{board};
-                    if (board_copy.input(from, to)) {
-                        auto score = board_copy.players().at(board_copy.turn()).score;
-                        if (score - starting_score > best_score) {
-                            best_move = {from, to};
-                            best_score = score;
-                            std::clog << "new best: " << best_score << " with " << best_move.first << " to " << best_move.second
-                                      << std::endl;
-                        }
-                    }
+            auto from = (*piece)->pos;
+            auto to = capturing.second;
+            board::Board board_copy{board};
+            if (board_copy.captureQuick(from, to)) {
+                auto score = board_copy.players().at(turn).score;
+                if (score - starting_score > best_diff) {
+                    best_is_move = false;
+                    best_diff = score;
+                    best_move = {from, to};
                 }
             }
         }
     }
 
-    std::clog << "best: " << best_score << " with " << best_move.first << " to " << best_move.second << std::endl;
-    board.input(best_move.first, best_move.second);
+    if (best_is_move) {
+        board.moveQuick(best_move.first, best_move.second);
+    } else {
+        board.captureQuick(best_move.first, best_move.second);
+    }
     nextTurn();
 }
 
-bool ChessPlusPlusState::select() {
-    if (!board.valid(target))
-        return false;
-
+void ChessPlusPlusState::select() {
     selected = board.find(target); //doesn't matter if board.end(), selected won't change then
     if (selected != board.end() && (*selected)->suit != board.turn()) {
         selected = board.end(); //can't select enemy pieces
     }
-
-    return selected != board.end();
 }
 
 }

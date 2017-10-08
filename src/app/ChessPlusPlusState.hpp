@@ -30,7 +30,6 @@ class ChessPlusPlusState: public AppState
     board::Board board;
 
     board::Board::Pieces_t::iterator selected = board.end();
-    board::Board::Position_t source;
     board::Board::Position_t target;
     void nextTurn();
 
@@ -79,7 +78,7 @@ class ChessPlusPlusState: public AppState
     virtual void onLButtonReleased(int x, int y) override;
 
   private:
-    bool select();
+    void select();
 };
 }
 }

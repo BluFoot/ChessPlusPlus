@@ -86,7 +86,7 @@ void Board::addCapturable(piece::Piece const& p, const Board::Position_t& tile) 
 }
 
 auto Board::pieceMovement(piece::Piece const& p, Movements_t& m) const noexcept -> MovementsRange {
-    auto range = trajectories.equal_range(find(p));
+    auto range = m.equal_range(find(p));
     return {{range.first, range.second}};
 }
 
@@ -106,8 +106,6 @@ bool Board::valid(const Board::Position_t& pos) const noexcept {
 }
 
 bool Board::input(Position_t const& from, Position_t const& to) {
-    //std::clog << "Board::input " << from << " to " << to << std::endl;
-
     if (!valid(from)) {
         std::cerr << "invalid source position" << std::endl;
         return false;
@@ -133,11 +131,39 @@ bool Board::input(Position_t const& from, Position_t const& to) {
     if (enemy == end()) {
         return move(piece, to);
     } else {
-        return capture(piece, enemy);
+        return capture(piece, enemy, to);
     }
 }
 
-bool Board::capture(Pieces_t::iterator piece, Pieces_t::iterator enemy) {
+bool Board::moveQuick(Position_t const& from, Position_t const& to) {
+    (*find(from))->move(to);
+    update(to);
+    return true;
+}
+
+bool Board::captureQuick(Position_t const& from, Position_t const& to) {
+    auto piece = find(from);
+    auto enemy = find(to);
+
+    players_.at((*piece)->suit).score += (*enemy)->value;
+    if ((*enemy)->pclass == "King") {
+        players_.at((*enemy)->suit).alive = false;
+        std::clog << "Player " << ((*enemy)->suit) << " has been eliminated" << std::endl;
+        if (1 == std::count_if(players_.begin(), players_.end(), [](const auto& player) { return player.second.alive; })) {
+            winner_ = std::max_element(players_.begin(), players_.end(), [](const auto& player1, const auto& player2) {
+                return player1.second.score < player2.second.score;
+            });
+            std::clog << "Game over, winner: " << winner_.value()->first << std::endl;
+        }
+    }
+
+    pieces.erase(enemy);
+    (*piece)->move(to);
+    update(to);
+    return true;
+}
+
+bool Board::capture(Pieces_t::iterator piece, Pieces_t::iterator enemy, Position_t const& to) {
     if ((*enemy)->suit == (*piece)->suit) {
         std::cerr << "can't capture your own piece" << std::endl;
         return false;
@@ -162,9 +188,7 @@ bool Board::capture(Pieces_t::iterator piece, Pieces_t::iterator enemy) {
     }
 
     auto captured = capturable->first;
-    std::clog << players_.at((*piece)->suit).score << std::endl;
     players_.at((*piece)->suit).score += (*captured)->value;
-    std::clog << players_.at((*piece)->suit).score << std::endl;
     if ((*captured)->pclass == "King") {
         players_.at((*captured)->suit).alive = false;
         std::clog << "Player " << ((*captured)->suit) << " has been eliminated" << std::endl;
@@ -177,8 +201,8 @@ bool Board::capture(Pieces_t::iterator piece, Pieces_t::iterator enemy) {
     }
 
     pieces.erase(enemy);
-    (*piece)->move((*enemy)->pos);
-    update((*enemy)->pos);
+    (*piece)->move(to);
+    update(to);
     return true;
 }
 

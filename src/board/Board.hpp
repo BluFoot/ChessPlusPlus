@@ -106,11 +106,16 @@ class Board
 
   public:
     bool valid(Position_t const& pos) const noexcept;
+
     bool input(Position_t const& from, Position_t const& to);
+    bool moveQuick(Position_t const& from, Position_t const& to);
+    bool captureQuick(Position_t const& from, Position_t const& to);
 
   private:
-    bool capture(Pieces_t::iterator piece, Pieces_t::iterator enemy);
     bool move(Pieces_t::iterator piece, Position_t const& to);
+    bool capture(Pieces_t::iterator piece, Pieces_t::iterator enemy, Position_t const& to);
+
+  private:
     void update(Position_t const& pos);
     void nextTurn();
 };
