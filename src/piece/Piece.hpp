@@ -60,13 +60,13 @@ class Piece
 
     void addTrajectory(Position_t const& tile);
     void addCapturing(Position_t const& tile);
-    void addCapturable(Position_t const& tile);
+    //void addCapturable(Position_t const& tile);
 
     void transform(Class_t const& to);
 
   private:
     void makeTrajectory() {
-        addCapturable(pos);
+        //addCapturable(pos);
         calcTrajectory();
     }
 

@@ -47,6 +47,10 @@ class Board
         Position_t to;
     };
 
+    friend std::ostream& operator<<(std::ostream& os, Move const& m) {
+        return os << m.from << " => " << m.to;
+    }
+
     using Movements_t = std::multimap<Pieces_t::const_iterator, Position_t, Pieces_t_const_iterator_compare>;
     using Factory_t = std::map<config::BoardConfig::PieceClass_t, std::function<
         Pieces_t::value_type(Board&, Position_t const&, Suit_t const&)>>; //Used to create new pieces
@@ -62,7 +66,7 @@ class Board
 
     Movements_t trajectories; //where pieces can go
     Movements_t capturings;   //where pieces can capture
-    Movements_t capturables;  //where pieces can be captured
+    //Movements_t capturables;  //where pieces can be captured
 
     static Factory_t& factory() {
         static Factory_t f;
@@ -95,16 +99,16 @@ class Board
   public:
     void addTrajectory(piece::Piece const& p, Position_t const& tile);
     void addCapturing(piece::Piece const& p, Position_t const& tile);
-    void addCapturable(piece::Piece const& p, Position_t const& tile);
+    //void addCapturable(piece::Piece const& p, Position_t const& tile);
 
     Movements_t const& pieceTrajectories() const noexcept { return trajectories; }
     Movements_t const& pieceCapturings() const noexcept { return capturings; }
-    Movements_t const& pieceCapturables() const noexcept { return capturables; }
+    //Movements_t const& pieceCapturables() const noexcept { return capturables; }
 
     using MovementsRange = util::Range<Movements_t::const_iterator>;
     MovementsRange pieceTrajectory(piece::Piece const& p) const noexcept;
     MovementsRange pieceCapturing(piece::Piece const& p) const noexcept;
-    MovementsRange pieceCapturable(piece::Piece const& p) const noexcept;
+    //MovementsRange pieceCapturable(piece::Piece const& p) const noexcept;
 
   private:
     void addMovement(piece::Piece const& p, Position_t const& tile, Movements_t& m);

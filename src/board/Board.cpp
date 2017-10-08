@@ -81,9 +81,9 @@ void Board::addCapturing(piece::Piece const& p, const Board::Position_t& tile) {
     addMovement(p, tile, capturings);
 }
 
-void Board::addCapturable(piece::Piece const& p, const Board::Position_t& tile) {
-    addMovement(p, tile, capturables);
-}
+//void Board::addCapturable(piece::Piece const& p, const Board::Position_t& tile) {
+//    addMovement(p, tile, capturables);
+//}
 
 auto Board::pieceMovement(piece::Piece const& p, Movements_t const& m) const noexcept -> MovementsRange {
     auto range = m.equal_range(find(p));
@@ -96,13 +96,12 @@ auto Board::pieceTrajectory(piece::Piece const& p) const noexcept -> MovementsRa
 auto Board::pieceCapturing(piece::Piece const& p) const noexcept -> MovementsRange {
     return pieceMovement(p, capturings);
 }
-auto Board::pieceCapturable(piece::Piece const& p) const noexcept -> MovementsRange {
-    return pieceMovement(p, capturables);
-}
+//auto Board::pieceCapturable(piece::Piece const& p) const noexcept -> MovementsRange {
+//    return pieceMovement(p, capturables);
+//}
 
 bool Board::valid(const Board::Position_t& pos) const noexcept {
-    return config.initialLayout().find(pos) != config.initialLayout().end()
-        && pos.isWithin(Position_t::Origin(), {config.boardWidth(), config.boardHeight()});
+    return config.initialLayout().find(pos) != config.initialLayout().end();
 }
 
 bool Board::input(Move const& move) {
@@ -194,20 +193,10 @@ bool Board::capture(Pieces_t::iterator piece, Pieces_t::iterator enemy, Position
         return false;
     }
 
-    auto capturable = std::find_if(capturables.begin(), capturables.end(), [&](board::Board::Movements_t::value_type const& m) {
-        return m.first == enemy && m.second == (*enemy)->pos;
-    });
-
-    if (capturable == capturables.end()) {
-        std::cerr << "can't capture in that direction" << std::endl;
-        return false;
-    }
-
-    auto captured = capturable->first;
-    players_.at((*piece)->suit).score += (*captured)->value;
-    if ((*captured)->pclass == "King") {
-        players_.at((*captured)->suit).alive = false;
-        std::clog << "Player " << ((*captured)->suit) << " has been eliminated" << std::endl;
+    players_.at((*piece)->suit).score += (*enemy)->value;
+    if ((*enemy)->pclass == "King") {
+        players_.at((*enemy)->suit).alive = false;
+        std::clog << "Player " << ((*enemy)->suit) << " has been eliminated" << std::endl;
         if (1 == std::count_if(players_.begin(), players_.end(), [](const auto& player) { return player.second.alive; })) {
             winner_ = std::max_element(players_.begin(), players_.end(), [](const auto& player1, const auto& player2) {
                 return player1.second.score < player2.second.score;
@@ -225,7 +214,7 @@ bool Board::capture(Pieces_t::iterator piece, Pieces_t::iterator enemy, Position
 void Board::update(Position_t const& pos) {
     trajectories.clear();
     capturings.clear();
-    capturables.clear();
+    //capturables.clear();
     for (auto& p : pieces) {
         p->tick(pos);
         p->makeTrajectory();

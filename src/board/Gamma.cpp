@@ -1,4 +1,7 @@
 #include "Gamma.hpp"
+
+#include <chrono>
+
 #include "piece/Piece.hpp"
 
 namespace chesspp
@@ -6,17 +9,17 @@ namespace chesspp
 namespace board
 {
 std::optional<Board::Move> Gamma::calc(Board const& board) {
-    int best_diff = -1;
+    auto start = std::chrono::system_clock::now();
     std::optional<Board::Move> best_move;
-    auto starting_score = board.players().at(board.turn()).score;
+
     auto turn = board.turn();
+    auto starting_score = evalBoard(board, turn);
+    int best_diff = std::numeric_limits<int>::min();
 
-    auto legal_moves = legalMoves(board);
-
-    for (auto const& move : legal_moves) {
+    for (auto const& move : legalMoves(board)) {
         board::Board board_copy{board};
         if (board_copy.inputQuick(move)) {
-            auto score = board_copy.players().at(turn).score;
+            auto score = evalBoard(board_copy, turn);
             if (score - starting_score > best_diff) {
                 best_diff = score - starting_score;
                 best_move = move;
@@ -24,6 +27,9 @@ std::optional<Board::Move> Gamma::calc(Board const& board) {
         }
     }
 
+    auto duration = std::chrono::system_clock::now() - start;
+    std::clog << "calc() for " << turn << " took " << std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()
+              << "ms" << std::endl;
     return best_move;
 }
 
@@ -43,19 +49,25 @@ std::vector<Gamma::Move> Gamma::legalMoves(Board const& board) {
         auto capturings = board.pieceCapturing(**piece);
         for (auto const& capturing : capturings) {
             auto enemy = board.find(capturing.second);
-            if (enemy == board.end() || (*piece)->suit == (*enemy)->suit)
-                continue;
-
-            auto capturables = board.pieceCapturable(**enemy);
-            auto capturable = std::find_if(capturables.begin(), capturables.end(), [&](auto const& capturable_) {
-                return capturable_.first == enemy && capturable_.second == (*enemy)->pos;
-            });
-            if (capturable != capturables.end()) {
+            if (enemy != board.end() && (*piece)->suit != (*enemy)->suit) {
                 moves.emplace_back(Move{(*piece)->pos, capturing.second});
             }
         }
     }
     return moves;
+}
+
+int Gamma::evalBoard(const Board& board, const Suit_t& turn) {
+    int score = 0;
+    for (auto const& player : board.players()) {
+        score += player.second.score * (player.first == turn ? 1 : -1);
+    }
+    for (auto const& piece : board) {
+        if (piece->suit == turn) {
+            score += piece->value;
+        }
+    }
+    return score;
 }
 }
 }

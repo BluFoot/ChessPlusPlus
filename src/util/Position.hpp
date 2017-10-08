@@ -55,17 +55,6 @@ class Position final
     ~Position() = default;
 
     /**
-     * Checks if this position is within a boundry of
-     * top-left and bottom-right positions, including edges.
-     * \param topleft the lowest coordinate corner
-     * \param bottomright the highest coordinate corner
-     * \return whether this position is inclusively within the given boundaries.
-     */
-    bool isWithin(Position const& topleft, Position const& bottomright) const noexcept {
-        return topleft.x <= x && topleft.y <= y && x <= bottomright.x && y <= bottomright.y;
-    }
-
-    /**
      * Moves this position relative to itself.
      * \param xoff the value to add to x, of type signed T
      * \param yoff the value to add to y, of type signed T

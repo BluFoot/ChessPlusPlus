@@ -28,9 +28,9 @@ std::unique_ptr<Piece> Pawn::clone(board::Board& board) {
 }
 
 void Pawn::tick(Position_t const& m) {
-    if (moves == 1 && m != pos) { //moved just happened, en passant no longer allowed
-        en_passant = false;
-    }
+    //if (moves == 1 && m != pos) { //moved just happened, en passant no longer allowed
+    //    en_passant = false;
+    //}
 }
 
 void Pawn::moveUpdate(const Piece::Position_t& from, const Piece::Position_t& to) {
@@ -67,10 +67,11 @@ void Pawn::calcTrajectory() {
             {
                 addTrajectory(Position_t(pos).move(facing, 2));
             }
-        } else if (moves == 1 && en_passant) //just moved 2 spaces forward
-        {
-            addCapturable(Position_t(pos).move(facing, -1)); //enable en passant
         }
+        //else if (moves == 1 && en_passant) //just moved 2 spaces forward
+        //{
+        //    addCapturable(Position_t(pos).move(facing, -1)); //enable en passant
+        //}
 
         Position_t diagr = Position_t(pos).move(Rotate(facing, +1));
         if (board.valid(diagr)) //can capture diagonally forward-right

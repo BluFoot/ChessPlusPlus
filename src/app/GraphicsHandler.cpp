@@ -7,9 +7,7 @@ namespace chesspp
 {
 namespace app
 {
-GraphicsHandler::GraphicsHandler(sf::RenderWindow& disp,
-                                 config::ResourcesConfig& resc,
-                                 config::BoardConfig& bc)
+GraphicsHandler::GraphicsHandler(sf::RenderWindow& disp, config::ResourcesConfig& resc, config::BoardConfig& bc)
     : display(disp)         //can't use {}
       , res_config(resc)      //can't use {}
       , board_config(bc)      //can't use {}
@@ -48,30 +46,24 @@ void GraphicsHandler::drawTrajectory(piece::Piece const& p, bool enemy) {
         auto& sprite = (enemy ? enemy_move : valid_move);
         for (auto const& it : p.board.pieceTrajectory(p)) {
             if (!p.board.occupied(it.second)) {
-                if (std::find_if(p.board.pieceCapturables().begin(), p.board.pieceCapturables().end(),
-                                 [&](board::Board::Movements_t::value_type const& m) {
-                                     return m.second == it.second && (*m.first)->suit != p.suit;
-                                 }) == p.board.pieceCapturables().end()) {
-                    drawSpriteAtCell(sprite, it.second.x, it.second.y);
-                }
+                drawSpriteAtCell(sprite, it.second.x, it.second.y);
             }
         }
     }
     {
         auto& sprite = (enemy ? enemy_capture : valid_capture);
         for (auto const& it : p.board.pieceCapturing(p)) {
-            for (auto const& c : p.board.pieceCapturables()) {
-                if (c.second == it.second && (*c.first)->suit != p.suit) {
-                    drawSpriteAtCell(sprite, it.second.x, it.second.y);
-                    auto jt = std::find_if(p.board.pieceTrajectories().begin(), p.board.pieceTrajectories().end(),
-                                           [&](board::Board::Movements_t::value_type const& m) {
-                                               return (*m.first)->pos == it.second;
-                                           });
-                    if (jt != p.board.pieceTrajectories().end()) {
-                        drawPiece(**(jt->first)); //redraw
-                    }
-                    break;
+            auto enemy_piece = p.board.find(it.second);
+            if (enemy_piece != p.board.end() && (*enemy_piece)->suit != p.suit) {
+                drawSpriteAtCell(sprite, it.second.x, it.second.y);
+                auto jt = std::find_if(p.board.pieceTrajectories().begin(), p.board.pieceTrajectories().end(),
+                                       [&](board::Board::Movements_t::value_type const& m) {
+                                           return (*m.first)->pos == it.second;
+                                       });
+                if (jt != p.board.pieceTrajectories().end()) {
+                    drawPiece(**(jt->first)); //redraw
                 }
+                break;
             }
         }
     }
