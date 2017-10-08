@@ -33,7 +33,6 @@ class ChessPlusPlusState: public AppState
     board::Board::Position_t source;
     board::Board::Position_t target;
     void nextTurn();
-    board::Board::Pieces_t::iterator find(board::Board::Position_t const& pos) const;
 
     std::mt19937 gen{0};
 

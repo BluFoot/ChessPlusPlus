@@ -7,15 +7,15 @@ namespace piece
 static auto KingRegistration = board::Board::registerPieceClass("King", [](board::Board& b,
                                                                            board::Board::Position_t const& p,
                                                                            board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
-    return board::Board::Pieces_t::value_type(new King(b, p, s, "King", 20));
+    return board::Board::Pieces_t::value_type(new King(b, p, s, "King", 20, 0));
 });
 
-King::King(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t const& pc, Score_t const& v)
-    : Piece{b, pos_, s_, pc, v} {
+King::King(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t const& pc, Score_t const& v, size_t m)
+    : Piece{b, pos_, s_, pc, v, m} {
 }
 
-std::unique_ptr<Piece> King::clone() {
-    return std::make_unique<King>(*this);
+std::unique_ptr<Piece> King::clone(board::Board& board) {
+    return std::make_unique<King>(board, pos, suit, pclass, value, moves);
 }
 
 void King::calcTrajectory() {

@@ -22,13 +22,6 @@ ChessPlusPlusState::ChessPlusPlusState(Application& app_, sf::RenderWindow& disp
 void ChessPlusPlusState::nextTurn() {
     selected = board.end();
     target = {127, 127};
-    board.nextTurn();
-}
-
-board::Board::Pieces_t::iterator ChessPlusPlusState::find(board::Board::Position_t const& pos) const {
-    return std::find_if(board.begin(), board.end(), [&](std::unique_ptr<piece::Piece> const& up) -> bool {
-        return up->pos == pos;
-    });
 }
 
 void ChessPlusPlusState::onRender() {
@@ -37,7 +30,7 @@ void ChessPlusPlusState::onRender() {
         graphics.drawTrajectory(**selected);
     }
     if (board.valid(target)) {
-        auto piece = find(target);
+        auto piece = board.find(target);
         if (piece != board.end()) {
             graphics.drawTrajectory(**piece, (*piece)->suit != board.turn());
         }
@@ -69,8 +62,8 @@ void ChessPlusPlusState::onLButtonReleased(int x, int y) {
 }
 
 bool ChessPlusPlusState::waitingForUser() {
-    return false;
-    //return board.turn() == "Red";
+    //return false;
+    return board.turn() == "Red";
 }
 
 void ChessPlusPlusState::aiMove() {
@@ -88,7 +81,7 @@ void ChessPlusPlusState::aiMove() {
             board::Board::Position_t from{x1, y1};
             if (!board.valid(from))
                 continue;
-            auto piece = find(from);
+            auto piece = board.find(from);
             if (piece == board.end() || (*piece)->suit != board.turn())
                 continue;
 
@@ -98,12 +91,41 @@ void ChessPlusPlusState::aiMove() {
                     if (!board.valid(to))
                         continue;
 
+                    auto enemy = board.find(to);
+                    if (enemy == board.end()) { // move
+                        auto trajectories = board.pieceTrajectory(**piece);
+                        auto target = std::find_if(trajectories.begin(), trajectories.end(), [&](auto const& m) {
+                            return m.second == to;
+                        });
+                        if (target == trajectories.end())
+                            continue;
+                    } else { // capture
+                        if ((*enemy)->suit == (*piece)->suit)
+                            continue;
+
+                        auto capturings = board.pieceCapturing(**piece);
+                        auto capturing = std::find_if(capturings.begin(), capturings.end(), [&](auto const& m) {
+                            return m.second == to;
+                        });
+                        if (capturing == capturings.end())
+                            continue;
+
+                        auto capturables = board.pieceCapturable(**enemy);
+                        auto capturable = std::find_if(capturables.begin(), capturables.end(), [&](auto const& m) {
+                            return m.second == to;
+                        });
+                        if (capturable == capturables.end())
+                            continue;
+                    }
+
                     board::Board board_copy{board};
                     if (board_copy.input(from, to)) {
                         auto score = board_copy.players().at(board_copy.turn()).score;
-                        std::clog << (score - starting_score) << std::endl;
                         if (score - starting_score > best_score) {
-                            best_move = {source, target};
+                            best_move = {from, to};
+                            best_score = score;
+                            std::clog << "new best: " << best_score << " with " << best_move.first << " to " << best_move.second
+                                      << std::endl;
                         }
                     }
                 }
@@ -111,7 +133,7 @@ void ChessPlusPlusState::aiMove() {
         }
     }
 
-    std::clog << "best move: " << best_move.first << " to " << best_move.second << std::endl;
+    std::clog << "best: " << best_score << " with " << best_move.first << " to " << best_move.second << std::endl;
     board.input(best_move.first, best_move.second);
     nextTurn();
 }
@@ -120,7 +142,7 @@ bool ChessPlusPlusState::select() {
     if (!board.valid(target))
         return false;
 
-    selected = find(target); //doesn't matter if board.end(), selected won't change then
+    selected = board.find(target); //doesn't matter if board.end(), selected won't change then
     if (selected != board.end() && (*selected)->suit != board.turn()) {
         selected = board.end(); //can't select enemy pieces
     }

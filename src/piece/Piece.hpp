@@ -39,8 +39,8 @@ class Piece
     Position_t p;
     Suit_t s;
     Class_t c;
-    std::size_t m = 0;
     Score_t v;
+    std::size_t m;
   public:
     /**
      * \brief
@@ -79,9 +79,14 @@ class Piece
      * \param s The display suit of the piece.
      * \param pc The display class of the piece.
      */
-    Piece(board::Board& b, Position_t const& pos, Suit_t const& s, Class_t const& pc, Score_t v);
+    Piece(board::Board& b,
+          Position_t const& pos,
+          Suit_t const& s,
+          Class_t const& pc,
+          Score_t v,
+          size_t m);
     virtual ~Piece() = default;
-    virtual std::unique_ptr<Piece> clone() = 0;
+    virtual std::unique_ptr<Piece> clone(board::Board& board) = 0;
 
     /**
      * \brief

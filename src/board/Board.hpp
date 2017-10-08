@@ -72,8 +72,6 @@ class Board
     Players_t const& players() const { return players_; }
     std::optional<Players_t::const_iterator> winner() const { return winner_; };
 
-    void nextTurn();
-
     static auto registerPieceClass(Factory_t::key_type const& type, Factory_t::mapped_type ctor) -> Factory_t::iterator {
         return factory().insert({type, ctor}).first;
     }
@@ -106,15 +104,15 @@ class Board
     void addMovement(piece::Piece const& p, Position_t const& tile, Movements_t& m);
     auto pieceMovement(piece::Piece const& p, Movements_t& m) const noexcept -> MovementsRange;
 
-    void update(Position_t const& pos);
-
   public:
-    bool input(Position_t const& from, Position_t const& to);
     bool valid(Position_t const& pos) const noexcept;
+    bool input(Position_t const& from, Position_t const& to);
 
   private:
     bool capture(Pieces_t::iterator piece, Pieces_t::iterator enemy);
     bool move(Pieces_t::iterator piece, Position_t const& to);
+    void update(Position_t const& pos);
+    void nextTurn();
 };
 }
 }

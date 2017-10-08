@@ -8,14 +8,13 @@ namespace chesspp
 {
 namespace piece
 {
-Piece::Piece(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t const& pc, Score_t v)
+Piece::Piece(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t const& pc, Score_t v, size_t m)
     : board(b) //can't use {}
       , p{pos_}
       , s{s_}
       , c{pc}
-      , v{v} {
-    std::clog << "Creation of " << *this << std::endl;
-}
+      , v{v}
+      , m{m} {}
 
 void Piece::addTrajectory(Position_t const& tile) {
     board.addTrajectory(*this, tile);

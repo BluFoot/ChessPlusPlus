@@ -9,21 +9,22 @@ static auto PawnRegistration = board::Board::registerPieceClass("Pawn", [](board
                                                                            board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
     auto d = util::Direction::None;
     std::istringstream {std::string(b.config.metadata("pawn facing", p.y, p.x))} >> d;
-    return board::Board::Pieces_t::value_type(new Pawn(b, p, s, "Pawn", d, 1));
+    return board::Board::Pieces_t::value_type(new Pawn(b, p, s, "Pawn", 1, 0, d));
 });
 
 Pawn::Pawn(board::Board& b,
            Position_t const& pos_,
            Suit_t const& s_,
            Class_t const& pc,
-           util::Direction const& face,
-           Score_t const& v)
-    : Piece{b, pos_, s_, pc, v}
+           Score_t const& v,
+           size_t m,
+           util::Direction const& face)
+    : Piece{b, pos_, s_, pc, v, m}
       , facing{face} {
 }
 
-std::unique_ptr<Piece> Pawn::clone() {
-    return std::make_unique<Pawn>(*this);
+std::unique_ptr<Piece> Pawn::clone(board::Board& board) {
+    return std::make_unique<Pawn>(board, pos, suit, pclass, value, moves, facing);
 }
 
 void Pawn::tick(Position_t const& m) {

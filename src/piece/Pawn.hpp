@@ -18,9 +18,10 @@ class Pawn: public virtual Piece
          Position_t const& pos,
          Suit_t const& s,
          Class_t const& pc,
-         util::Direction const& face,
-         Score_t const& v);
-    virtual std::unique_ptr<Piece> clone() override;
+         Score_t const& v,
+         size_t m,
+         util::Direction const& face);
+    virtual std::unique_ptr<Piece> clone(board::Board& board) override;
 
     virtual void tick(Position_t const& p) override;
     virtual void moveUpdate(Position_t const& from, Position_t const& to) override;

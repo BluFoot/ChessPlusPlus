@@ -30,23 +30,17 @@ Board::Board(config::BoardConfig const& conf)
 Board::Board(const Board& board)
     : config{board.config}
       , player_order_{board.player_order_}
-      , turn_{board.turn_}
-      , players_{board.players_}
-      , winner_{board.winner_} {
-    for (const auto& piece : board.pieces) {
-        pieces.insert(piece->clone());
+      , players_{board.players_} {
+    turn_ = std::find(player_order_.begin(), player_order_.end(), *board.turn_);
+    if (board.winner_)
+        winner_ = players_.find((*board.winner_)->first);
+
+    for (auto const& piece : board.pieces) {
+        auto it = pieces.insert(piece->clone(*this));
     }
-    for (const auto& p : pieces) {
+    for (auto const& p : pieces) {
         p->makeTrajectory();
     }
-}
-
-void Board::nextTurn() {
-    do {
-        if (++turn_ == player_order_.end()) {
-            turn_ = player_order_.begin();
-        }
-    } while (!players_.at(*turn_).alive);
 }
 
 bool Board::occupied(Position_t const& pos) const noexcept {
@@ -106,18 +100,13 @@ auto Board::pieceCapturable(piece::Piece const& p) noexcept -> MovementsRange {
     return pieceMovement(p, capturables);
 }
 
-void Board::update(Position_t const& pos) {
-    trajectories.clear();
-    capturings.clear();
-    capturables.clear();
-    for (auto& p : pieces) {
-        p->tick(pos);
-        p->makeTrajectory();
-    }
+bool Board::valid(const Board::Position_t& pos) const noexcept {
+    return config.initialLayout().find(pos) != config.initialLayout().end()
+        && pos.isWithin(Position_t::Origin(), {config.boardWidth(), config.boardHeight()});
 }
 
 bool Board::input(Position_t const& from, Position_t const& to) {
-    std::clog << "Board::input " << from << " to " << to << std::endl;
+    //std::clog << "Board::input " << from << " to " << to << std::endl;
 
     if (!valid(from)) {
         std::cerr << "invalid source position" << std::endl;
@@ -173,7 +162,9 @@ bool Board::capture(Pieces_t::iterator piece, Pieces_t::iterator enemy) {
     }
 
     auto captured = capturable->first;
+    std::clog << players_.at((*piece)->suit).score << std::endl;
     players_.at((*piece)->suit).score += (*captured)->value;
+    std::clog << players_.at((*piece)->suit).score << std::endl;
     if ((*captured)->pclass == "King") {
         players_.at((*captured)->suit).alive = false;
         std::clog << "Player " << ((*captured)->suit) << " has been eliminated" << std::endl;
@@ -186,10 +177,8 @@ bool Board::capture(Pieces_t::iterator piece, Pieces_t::iterator enemy) {
     }
 
     pieces.erase(enemy);
-    std::clog << "Capture: from " << (*enemy)->pos;
     (*piece)->move((*enemy)->pos);
     update((*enemy)->pos);
-    std::clog << " to " << (*enemy)->pos << std::endl;
     return true;
 }
 
@@ -208,16 +197,28 @@ bool Board::move(Pieces_t::iterator piece, Position_t const& to) {
         return false;
     }
 
-    std::clog << "Moved piece at " << (*piece)->pos << std::flush;
     (*piece)->move(to);
     update(to);
-    std::clog << " to " << to << std::endl;
     return true;
 }
 
-bool Board::valid(const Board::Position_t& pos) const noexcept {
-    return config.initialLayout().find(pos) != config.initialLayout().end()
-        && pos.isWithin(Position_t::Origin(), {config.boardWidth(), config.boardHeight()});
+void Board::update(Position_t const& pos) {
+    trajectories.clear();
+    capturings.clear();
+    capturables.clear();
+    for (auto& p : pieces) {
+        p->tick(pos);
+        p->makeTrajectory();
+    }
+    nextTurn();
+}
+
+void Board::nextTurn() {
+    do {
+        if (++turn_ == player_order_.end()) {
+            turn_ = player_order_.begin();
+        }
+    } while (!players_.at(*turn_).alive);
 }
 }
 }
