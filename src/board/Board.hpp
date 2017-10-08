@@ -31,7 +31,7 @@ class Board
     using Suit_t = config::BoardConfig::SuitClass_t;
     using Suits_t = config::BoardConfig::Suits_t;
     using Pieces_t = std::set<std::unique_ptr<piece::Piece>>;
-    using Positions_t = std::map<Position_t, std::optional<const piece::Piece* const>>;
+    using Positions_t = std::unordered_map<Position_t, std::optional<const piece::Piece* const>>;
     using Players_t = std::unordered_map<Suit_t, PlayerDetails>;
 
     struct Move

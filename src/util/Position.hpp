@@ -9,6 +9,8 @@
 #include <ostream>
 #include <cstdint>
 
+#include <boost/functional/hash.hpp>
+
 namespace chesspp
 {
 namespace util
@@ -85,12 +87,32 @@ class Position final
     friend bool operator<(Position const& a, Position const& b) noexcept {
         return (a.x < b.x) || (a.x == b.x && a.y < b.y);
     }
+
+    friend std::size_t hash_value(Position const& p) {
+        std::size_t seed = 0;
+        boost::hash_combine(seed, p.x);
+        boost::hash_combine(seed, p.y);
+
+        return seed;
+    }
 };
 
 inline std::ostream& operator<<(std::ostream& os, Position const& p) noexcept {
     return os << '(' << static_cast<int>(p.x) << ", " << static_cast<int>(p.y) << ')';
 }
 }
+}
+
+namespace std
+{
+template<>
+struct hash<chesspp::util::Position>
+{
+    std::size_t operator()(const chesspp::util::Position& p) const {
+        boost::hash<chesspp::util::Position> hasher;
+        return hasher(p);
+    }
+};
 }
 
 #endif
