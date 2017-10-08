@@ -58,10 +58,10 @@ void GraphicsHandler::drawTrajectory(piece::Piece const& p, bool enemy) {
                 drawSpriteAtCell(sprite, it.second.x, it.second.y);
                 auto jt = std::find_if(p.board.pieceTrajectories().begin(), p.board.pieceTrajectories().end(),
                                        [&](board::Board::Movements_t::value_type const& m) {
-                                           return (*m.first)->pos == it.second;
+                                           return m.first->pos == it.second;
                                        });
                 if (jt != p.board.pieceTrajectories().end()) {
-                    drawPiece(**(jt->first)); //redraw
+                    drawPiece(*(jt->first)); //redraw
                 }
                 break;
             }

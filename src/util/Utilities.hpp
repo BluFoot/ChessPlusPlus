@@ -10,7 +10,10 @@
 
 namespace std
 {
-template<typename T> using optional = std::experimental::optional<T>;
+template<typename T>
+using optional = experimental::optional<T>;
+using nullopt_t = experimental::nullopt_t;
+constexpr nullopt_t nullopt { nullopt_t::_Construct::_Token };
 }
 
 namespace chesspp

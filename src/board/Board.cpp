@@ -11,14 +11,17 @@ namespace board
 Board::Board(config::BoardConfig const& conf)
     : config(conf)
       , player_order_{conf.suits()} {
-    for (auto const& slot : conf.initialLayout()) {
+    for (auto const& slot : config.initialLayout()) {
         if (slot.second) {
             pieces.emplace(factory().at(slot.second.value().first)(*this, slot.first, slot.second.value().second));
+        } else {
+            positions.emplace(slot.first, std::nullopt);
         }
     }
 
-    for (auto const& p : pieces) {
-        p->makeTrajectory();
+    for (auto const& piece : pieces) {
+        positions.emplace(piece->pos, piece.get());
+        piece->calcTrajectory();
     }
 
     for (const auto& suit : config.suits()) {
@@ -31,25 +34,25 @@ Board::Board(const Board& board)
     : config{board.config}
       , player_order_{board.player_order_}
       , players_{board.players_} {
-    turn_ = std::find(player_order_.begin(), player_order_.end(), *board.turn_);
-    if (board.winner_)
-        winner_ = players_.find((*board.winner_)->first);
-
-    for (auto const& piece : board.pieces) {
-        auto it = pieces.insert(piece->clone(*this));
-    }
-    for (auto const& p : pieces) {
-        p->makeTrajectory();
-    }
-}
-
-bool Board::occupied(Position_t const& pos) const noexcept {
-    for (auto const& p : *this) {
-        if (p->pos == pos) {
-            return true;
+    for (auto const& slot : board.positions) {
+        if (!slot.second) {
+            positions.emplace(slot.first, std::nullopt);
         }
     }
-    return false;
+
+    for (auto const& piece : board.pieces) {
+        pieces.insert(piece->clone(*this));
+    }
+
+    for (auto const& piece : pieces) {
+        positions.emplace(piece->pos, piece.get());
+        piece->calcTrajectory();
+    }
+
+    turn_ = std::find(player_order_.begin(), player_order_.end(), *board.turn_);
+    if (board.winner_) {
+        winner_ = players_.find((*board.winner_)->first);
+    }
 }
 
 auto Board::find(Position_t const& pos) const noexcept -> Pieces_t::const_iterator {
@@ -58,35 +61,30 @@ auto Board::find(Position_t const& pos) const noexcept -> Pieces_t::const_iterat
     });
 }
 
-auto Board::find(piece::Piece const& p) const noexcept -> Pieces_t::const_iterator {
-    return std::find_if(begin(), end(), [&](Pieces_t::value_type const& v) {
-        return v.get() == std::addressof(p);
-    });
+bool Board::occupied(Position_t const& pos) const noexcept {
+    auto it = positions.find(pos);
+    return it != positions.end() && it->second;
+}
+
+bool Board::valid(Board::Position_t const& pos) const noexcept {
+    return positions.find(pos) != positions.end();
 }
 
 void Board::addMovement(piece::Piece const& p, Position_t const& tile, Movements_t& m) {
     if (valid(tile)) {
-        auto it = find(p);
-        if (it != end()) {
-            m.insert(Movements_t::value_type(it, tile));
-        }
+        m.insert(Movements_t::value_type{&p, tile});
     }
 }
 
 void Board::addTrajectory(piece::Piece const& p, const Board::Position_t& tile) {
     addMovement(p, tile, trajectories);
 }
-
 void Board::addCapturing(piece::Piece const& p, const Board::Position_t& tile) {
     addMovement(p, tile, capturings);
 }
 
-//void Board::addCapturable(piece::Piece const& p, const Board::Position_t& tile) {
-//    addMovement(p, tile, capturables);
-//}
-
 auto Board::pieceMovement(piece::Piece const& p, Movements_t const& m) const noexcept -> MovementsRange {
-    auto range = m.equal_range(find(p));
+    auto range = m.equal_range(&p);
     return {{range.first, range.second}};
 }
 
@@ -95,13 +93,6 @@ auto Board::pieceTrajectory(piece::Piece const& p) const noexcept -> MovementsRa
 }
 auto Board::pieceCapturing(piece::Piece const& p) const noexcept -> MovementsRange {
     return pieceMovement(p, capturings);
-}
-//auto Board::pieceCapturable(piece::Piece const& p) const noexcept -> MovementsRange {
-//    return pieceMovement(p, capturables);
-//}
-
-bool Board::valid(const Board::Position_t& pos) const noexcept {
-    return config.initialLayout().find(pos) != config.initialLayout().end();
 }
 
 bool Board::input(Move const& move) {
@@ -139,23 +130,19 @@ bool Board::inputQuick(Move const& move) {
     auto enemy = find(move.to);
 
     if (enemy != end()) {
-        players_.at((*piece)->suit).score += (*enemy)->value;
-        if ((*enemy)->pclass == "King") {
-            players_.at((*enemy)->suit).alive = false;
-            std::clog << "Player " << ((*enemy)->suit) << " has been eliminated" << std::endl;
-            if (1 == std::count_if(players_.begin(), players_.end(), [](const auto& player) { return player.second.alive; })) {
-                winner_ = std::max_element(players_.begin(), players_.end(), [](const auto& player1, const auto& player2) {
-                    return player1.second.score < player2.second.score;
-                });
-                std::clog << "Game over, winner: " << winner_.value()->first << std::endl;
-            }
-        }
-        pieces.erase(enemy);
+        kill((*piece)->suit, enemy);
     }
 
-    (*piece)->move(move.to);
-    update(move.to);
+    movePiece(piece, move.to);
+    update();
     return true;
+}
+
+void Board::movePiece(Pieces_t::iterator piece, Position_t const& to) {
+    positions.at((*piece)->pos) = std::nullopt;
+    positions.erase(to);
+    positions.emplace(to, &(**piece));
+    (*piece)->move(to);
 }
 
 bool Board::moveTo(Pieces_t::iterator piece, Position_t const& to) {
@@ -165,7 +152,7 @@ bool Board::moveTo(Pieces_t::iterator piece, Position_t const& to) {
     }
 
     auto target = std::find_if(trajectories.begin(), trajectories.end(), [&](board::Board::Movements_t::value_type const& m) {
-        return m.first == piece && m.second == to;
+        return m.first == &(**piece) && m.second == to;
     });
 
     if (target == trajectories.end()) {
@@ -173,8 +160,8 @@ bool Board::moveTo(Pieces_t::iterator piece, Position_t const& to) {
         return false;
     }
 
-    (*piece)->move(to);
-    update(to);
+    movePiece(piece, to);
+    update();
     return true;
 }
 
@@ -185,7 +172,7 @@ bool Board::capture(Pieces_t::iterator piece, Pieces_t::iterator enemy, Position
     }
 
     auto capturing = std::find_if(capturings.begin(), capturings.end(), [&](board::Board::Movements_t::value_type const& m) {
-        return m.first == piece && m.second == (*enemy)->pos;
+        return m.first == &(**piece) && m.second == (*enemy)->pos;
     });
 
     if (capturing == capturings.end()) {
@@ -193,7 +180,13 @@ bool Board::capture(Pieces_t::iterator piece, Pieces_t::iterator enemy, Position
         return false;
     }
 
-    players_.at((*piece)->suit).score += (*enemy)->value;
+    kill((*piece)->suit, enemy);
+    movePiece(piece, to);
+    update();
+    return true;
+}
+
+void Board::kill(const Board::Suit_t& suit, Pieces_t::iterator enemy) {
     if ((*enemy)->pclass == "King") {
         players_.at((*enemy)->suit).alive = false;
         std::clog << "Player " << ((*enemy)->suit) << " has been eliminated" << std::endl;
@@ -205,19 +198,15 @@ bool Board::capture(Pieces_t::iterator piece, Pieces_t::iterator enemy, Position
         }
     }
 
+    players_.at(suit).score += (*enemy)->value;
     pieces.erase(enemy);
-    (*piece)->move(to);
-    update(to);
-    return true;
 }
 
-void Board::update(Position_t const& pos) {
+void Board::update() {
     trajectories.clear();
     capturings.clear();
-    //capturables.clear();
     for (auto& p : pieces) {
-        p->tick(pos);
-        p->makeTrajectory();
+        p->calcTrajectory();
     }
     nextTurn();
 }

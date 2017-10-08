@@ -24,10 +24,6 @@ void Piece::addCapturing(Position_t const& tile) {
     board.addCapturing(*this, tile);
 }
 
-//void Piece::addCapturable(Position_t const& tile) {
-//    board.addCapturable(*this, tile);
-//}
-
 void Piece::transform(const Piece::Class_t& to) {
     c = to;
 }

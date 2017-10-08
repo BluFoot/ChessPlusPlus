@@ -60,19 +60,10 @@ class Piece
 
     void addTrajectory(Position_t const& tile);
     void addCapturing(Position_t const& tile);
-    //void addCapturable(Position_t const& tile);
 
     void transform(Class_t const& to);
 
   private:
-    void makeTrajectory() {
-        //addCapturable(pos);
-        calcTrajectory();
-    }
-
-    virtual void tick(Position_t const& m) {
-    }
-
     void move(Position_t const& to) {
         Position_t from = pos;
         p = to;

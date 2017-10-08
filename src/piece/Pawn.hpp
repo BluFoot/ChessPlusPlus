@@ -23,7 +23,6 @@ class Pawn: public virtual Piece
          util::Direction const& face);
     virtual std::unique_ptr<Piece> clone(board::Board& board) override;
 
-    virtual void tick(Position_t const& p) override;
     virtual void moveUpdate(Position_t const& from, Position_t const& to) override;
 
   protected:

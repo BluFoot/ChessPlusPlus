@@ -27,12 +27,6 @@ std::unique_ptr<Piece> Pawn::clone(board::Board& board) {
     return std::make_unique<Pawn>(board, pos, suit, pclass, value, moves, facing);
 }
 
-void Pawn::tick(Position_t const& m) {
-    //if (moves == 1 && m != pos) { //moved just happened, en passant no longer allowed
-    //    en_passant = false;
-    //}
-}
-
 void Pawn::moveUpdate(const Piece::Position_t& from, const Piece::Position_t& to) {
     if ((from.x == 6 && to.x == 7) || (from.x == 9 && to.x == 8) || (from.y == 6 && to.y == 7) || (from.y == 9 && to.y == 8)) {
         transform(Piece::Class_t{"Queen"});
@@ -61,26 +55,16 @@ void Pawn::calcTrajectory() {
         //They may be captured via the space behind them
         //if they just moved forward two spaces (en passant).
         addTrajectory(Position_t(pos).move(facing));
-        if (moves == 0) //first move
-        {
-            if (!board.occupied(Position_t(pos).move(facing))) //can't jump over pieces
-            {
-                addTrajectory(Position_t(pos).move(facing, 2));
-            }
+        if (moves == 0 && !board.occupied(Position_t(pos).move(facing))) { //first move, can't jump over pieces
+            addTrajectory(Position_t(pos).move(facing, 2));
         }
-        //else if (moves == 1 && en_passant) //just moved 2 spaces forward
-        //{
-        //    addCapturable(Position_t(pos).move(facing, -1)); //enable en passant
-        //}
 
         Position_t diagr = Position_t(pos).move(Rotate(facing, +1));
-        if (board.valid(diagr)) //can capture diagonally forward-right
-        {
+        if (board.valid(diagr)) { //can capture diagonally forward-right
             addCapturing(diagr);
         }
         Position_t diagl = Position_t(pos).move(Rotate(facing, -1));
-        if (board.valid(diagl)) //can capture diagonally forward-left
-        {
+        if (board.valid(diagl)) { //can capture diagonally forward-left
             addCapturing(diagl);
         }
     }

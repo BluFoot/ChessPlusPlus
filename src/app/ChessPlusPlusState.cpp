@@ -36,8 +36,8 @@ void ChessPlusPlusState::onKeyPressed(sf::Keyboard::Key key, bool /*alt*/, bool 
     }
 }
 void ChessPlusPlusState::onMouseMoved(int x, int y) {
-    target.x = static_cast<board::Board::Position_t::value_type>(x / board.config.cellWidth());
-    target.y = static_cast<board::Board::Position_t::value_type>(y / board.config.cellHeight());
+    target.x = static_cast<std::uint8_t>(x / board.config.cellWidth());
+    target.y = static_cast<std::uint8_t>(y / board.config.cellHeight());
 }
 void ChessPlusPlusState::onLButtonPressed(int x, int y) {
 }
@@ -54,8 +54,9 @@ void ChessPlusPlusState::onLButtonReleased(int x, int y) {
 }
 
 bool ChessPlusPlusState::waitingForUser() {
-    //return false;
-    return board.turn() == "Red";
+    //return true;
+    return false;
+    //return board.turn() == "Blue";
 }
 
 void ChessPlusPlusState::aiMove() {
