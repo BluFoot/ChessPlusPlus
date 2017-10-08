@@ -1,4 +1,5 @@
-# Add sources
+# Add sources        "${CMAKE_CURRENT_LIST_DIR}/.cpp"
+
 target_sources(ChessPlusPlus PUBLIC
         "${CMAKE_CURRENT_LIST_DIR}/Application.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Button.cpp"

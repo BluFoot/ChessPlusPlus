@@ -3,7 +3,7 @@
 
 #include "config/BoardConfig.hpp"
 #include "util/Utilities.hpp"
-#include "PlayerDetails.h"
+#include "PlayerDetails.hpp"
 
 #include <map>
 #include <set>
@@ -41,6 +41,12 @@ class Board
         }
     };
   public:
+    struct Move
+    {
+        Position_t from;
+        Position_t to;
+    };
+
     using Movements_t = std::multimap<Pieces_t::const_iterator, Position_t, Pieces_t_const_iterator_compare>;
     using Factory_t = std::map<config::BoardConfig::PieceClass_t, std::function<
         Pieces_t::value_type(Board&, Position_t const&, Suit_t const&)>>; //Used to create new pieces
@@ -96,23 +102,22 @@ class Board
     Movements_t const& pieceCapturables() const noexcept { return capturables; }
 
     using MovementsRange = util::Range<Movements_t::const_iterator>;
-    MovementsRange pieceTrajectory(piece::Piece const& p) noexcept;
-    MovementsRange pieceCapturing(piece::Piece const& p) noexcept;
-    MovementsRange pieceCapturable(piece::Piece const& p) noexcept;
+    MovementsRange pieceTrajectory(piece::Piece const& p) const noexcept;
+    MovementsRange pieceCapturing(piece::Piece const& p) const noexcept;
+    MovementsRange pieceCapturable(piece::Piece const& p) const noexcept;
 
   private:
     void addMovement(piece::Piece const& p, Position_t const& tile, Movements_t& m);
-    auto pieceMovement(piece::Piece const& p, Movements_t& m) const noexcept -> MovementsRange;
+    auto pieceMovement(piece::Piece const& p, Movements_t const& m) const noexcept -> MovementsRange;
 
   public:
     bool valid(Position_t const& pos) const noexcept;
 
-    bool input(Position_t const& from, Position_t const& to);
-    bool moveQuick(Position_t const& from, Position_t const& to);
-    bool captureQuick(Position_t const& from, Position_t const& to);
+    bool input(Move const& move);
+    bool inputQuick(Move const& move);
 
   private:
-    bool move(Pieces_t::iterator piece, Position_t const& to);
+    bool moveTo(Pieces_t::iterator piece, Position_t const& to);
     bool capture(Pieces_t::iterator piece, Pieces_t::iterator enemy, Position_t const& to);
 
   private:

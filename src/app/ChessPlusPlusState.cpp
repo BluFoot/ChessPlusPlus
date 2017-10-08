@@ -3,8 +3,6 @@
 #include "StartMenuState.hpp"
 #include "GameOverState.hpp"
 
-#include <iostream>
-
 namespace chesspp
 {
 namespace app
@@ -18,11 +16,6 @@ ChessPlusPlusState::ChessPlusPlusState(Application& app_, sf::RenderWindow& disp
       , board_config{res_config}
       , graphics{display, res_config, board_config}
       , board{board_config} {}
-
-void ChessPlusPlusState::nextTurn() {
-    selected = board.end();
-    target = {127, 127};
-}
 
 void ChessPlusPlusState::onRender() {
     graphics.drawBoard(board);
@@ -52,7 +45,7 @@ void ChessPlusPlusState::onLButtonReleased(int x, int y) {
     if (selected == board.end()) {
         select();
     } else {
-        if (board.input((*selected)->pos, target)) {
+        if (board.input({(*selected)->pos, target})) {
             nextTurn();
         } else {
             select();
@@ -66,66 +59,9 @@ bool ChessPlusPlusState::waitingForUser() {
 }
 
 void ChessPlusPlusState::aiMove() {
-    bool best_is_move = true;
-    int best_diff = -1;
-    std::pair<board::Board::Position_t, board::Board::Position_t> best_move;
-    auto starting_score = board.players().at(board.turn()).score;
-    auto turn = board.turn();
-
-    for (auto piece = board.begin(); piece != board.end(); ++piece) {
-        if ((*piece)->suit != board.turn())
-            continue;
-
-        auto trajectories = board.pieceTrajectory(**piece);
-        for (auto const& trajectory : trajectories) {
-            if (board.occupied(trajectory.second))
-                continue;
-
-            auto from = (*piece)->pos;
-            auto to = trajectory.second;
-            board::Board board_copy{board};
-            if (board_copy.moveQuick(from, to)) {
-                auto score = board_copy.players().at(turn).score;
-                if (score - starting_score > best_diff) {
-                    best_is_move = true;
-                    best_diff = score - starting_score;
-                    best_move = {from, to};
-                }
-            }
-        }
-
-        auto capturings = board.pieceCapturing(**piece);
-        for (auto const& capturing : capturings) {
-            auto enemy = board.find(capturing.second);
-            if (enemy == board.end() || (*piece)->suit == (*enemy)->suit)
-                continue;
-
-            auto capturables = board.pieceCapturable(**enemy);
-            auto capturable = std::find_if(capturables.begin(), capturables.end(), [&](auto const& capturable_) {
-                return capturable_.first == enemy && capturable_.second == (*enemy)->pos;
-            });
-            if (capturable == capturables.end())
-                continue;
-
-            auto from = (*piece)->pos;
-            auto to = capturing.second;
-            board::Board board_copy{board};
-            if (board_copy.captureQuick(from, to)) {
-                auto score = board_copy.players().at(turn).score;
-                if (score - starting_score > best_diff) {
-                    best_is_move = false;
-                    best_diff = score;
-                    best_move = {from, to};
-                }
-            }
-        }
-    }
-
-    if (best_is_move) {
-        board.moveQuick(best_move.first, best_move.second);
-    } else {
-        board.captureQuick(best_move.first, best_move.second);
-    }
+    auto move = gamma.calc(board);
+    if (move)
+        board.input(move.value());
     nextTurn();
 }
 
@@ -134,6 +70,11 @@ void ChessPlusPlusState::select() {
     if (selected != board.end() && (*selected)->suit != board.turn()) {
         selected = board.end(); //can't select enemy pieces
     }
+}
+
+void ChessPlusPlusState::nextTurn() {
+    selected = board.end();
+    target = {127, 127};
 }
 
 }

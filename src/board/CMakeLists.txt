@@ -1,5 +1,6 @@
 # Add sources
 target_sources(ChessPlusPlus PUBLIC
         "${CMAKE_CURRENT_LIST_DIR}/Board.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/PlayerDetails.h"
+        "${CMAKE_CURRENT_LIST_DIR}/Gamma.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/PlayerDetails.hpp"
         )

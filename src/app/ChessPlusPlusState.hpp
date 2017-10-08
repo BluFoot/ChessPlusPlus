@@ -6,6 +6,7 @@
 
 #include "AppState.hpp"
 #include "Application.hpp"
+#include "board/Gamma.hpp"
 
 #include <set>
 #include <random>
@@ -28,12 +29,10 @@ class ChessPlusPlusState: public AppState
     config::BoardConfig board_config;
     GraphicsHandler graphics;
     board::Board board;
+    board::Gamma gamma;
 
     board::Board::Pieces_t::iterator selected = board.end();
     board::Board::Position_t target;
-    void nextTurn();
-
-    std::mt19937 gen{0};
 
   public:
     /**
@@ -79,6 +78,7 @@ class ChessPlusPlusState: public AppState
 
   private:
     void select();
+    void nextTurn();
 };
 }
 }
