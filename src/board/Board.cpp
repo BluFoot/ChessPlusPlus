@@ -90,7 +90,7 @@ bool Board::occupied(Position_t const& pos) const noexcept {
 }
 
 void Board::addMovement(Piece_cpt p, Position_t const& tile, Movements_t& m) {
-    m.insert(Movements_t::value_type{p, tile});
+    m.emplace(p, tile);
 }
 
 void Board::addTrajectory(Piece_cpt p, const Board::Position_t& tile) {

@@ -16,7 +16,7 @@ std::optional<Gamma::Move> Gamma::chooseMove(Board const& board) {
     int best_score = std::numeric_limits<int>::min();
 
     for (auto const& move : legalMoves(board)) {
-        board::Board board_copy{board};
+        Board board_copy{board};
         board_copy.inputQuick(move);
         auto score = calc(board_copy, 2);
         //std::clog << move << " = " << score << std::endl;
@@ -40,7 +40,7 @@ int Gamma::calc(Board const& board, size_t depth) {
     int best_score = std::numeric_limits<int>::min();
 
     for (auto const& move : legalMoves(board)) {
-        board::Board board_copy{board};
+        Board board_copy{board};
         board_copy.inputQuick(move);
         auto score = calc(board_copy, depth - 1);
         if (score > best_score) {
