@@ -22,14 +22,15 @@ namespace util
 class Position final
 {
   public:
-    std::uint8_t x, y; //intentionally public
+    using Coord_t = std::uint8_t;
+    Coord_t x, y; //intentionally public
 
-    Position(std::uint8_t x_ = 0, std::uint8_t y_ = 0) noexcept
+    Position(Coord_t x_ = 0, Coord_t y_ = 0) noexcept
         : x{x_}
           , y{y_} {
     }
 
-    Position& move(std::uint8_t xoff, std::uint8_t yoff) noexcept {
+    Position& move(Coord_t xoff, Coord_t yoff) noexcept {
         x += xoff;
         y += yoff;
         return *this;
@@ -87,32 +88,12 @@ class Position final
     friend bool operator<(Position const& a, Position const& b) noexcept {
         return (a.x < b.x) || (a.x == b.x && a.y < b.y);
     }
-
-    friend std::size_t hash_value(Position const& p) {
-        std::size_t seed = 0;
-        boost::hash_combine(seed, p.x);
-        boost::hash_combine(seed, p.y);
-
-        return seed;
-    }
 };
 
 inline std::ostream& operator<<(std::ostream& os, Position const& p) noexcept {
     return os << '(' << static_cast<int>(p.x) << ", " << static_cast<int>(p.y) << ')';
 }
 }
-}
-
-namespace std
-{
-template<>
-struct hash<chesspp::util::Position>
-{
-    std::size_t operator()(const chesspp::util::Position& p) const {
-        boost::hash<chesspp::util::Position> hasher;
-        return hasher(p);
-    }
-};
 }
 
 #endif

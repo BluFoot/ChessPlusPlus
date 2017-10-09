@@ -11,16 +11,22 @@ namespace board
 Board::Board(config::BoardConfig const& conf)
     : config(conf)
       , player_order_{conf.suits()} {
-    for (auto const& slot : config.initialLayout()) {
-        if (slot.second) {
-            pieces_.emplace_back(factory().at(slot.second.value().first)(*this, slot.first, slot.second.value().second));
-        } else {
-            positions_.emplace(slot.first, std::nullopt);
+    auto layout = config.initialLayout();
+    for (Coord_t c = 0; c < BOARD_SIZE; ++c) {
+        for (Coord_t r = 0; r < BOARD_SIZE; ++r) {
+            auto slot = layout.find({c, r});
+            if (slot == layout.end()) {
+                positions_[c][r].state = Square::INVALID;
+            } else if (slot->second.has_value()) {
+                pieces_.emplace_back(factory().at(slot->second.value().first)(*this, slot->first, slot->second.value().second));
+                positions_[c][r].occupy(pieces_.back().get());
+            } else {
+                positions_[c][r].state = Square::EMPTY;
+            }
         }
     }
 
     for (auto const& piece : pieces_) {
-        positions_.emplace(piece->pos, piece.get());
         piece->calcTrajectory();
     }
 
@@ -35,14 +41,15 @@ Board::Board(const Board& board)
       , player_order_{board.player_order_}
       , players_{board.players_} {
     pieces_.reserve(board.pieces_.size());
-    positions_.reserve(board.positions_.size());
 
-    for (auto const& slot : board.positions_) {
-        if (slot.second) {
-            pieces_.emplace_back(slot.second.value()->clone(*this));
-            positions_.emplace(slot.first, pieces_.back().get());
-        } else {
-            positions_.emplace(slot.first, std::nullopt);
+    for (Coord_t c = 0; c < BOARD_SIZE; ++c) {
+        for (Coord_t r = 0; r < BOARD_SIZE; ++r) {
+            auto const& square = board.positions_[c][r];
+            positions_[c][r].state = square.state;
+            if (square.occupied()) {
+                pieces_.emplace_back(square.piece->clone(*this));
+                positions_[c][r].piece = pieces_.back().get();
+            }
         }
     }
 
@@ -56,21 +63,31 @@ Board::Board(const Board& board)
     }
 }
 
+std::optional<Board::Piece_cpt> Board::find(Board::Position_t const& pos) const noexcept {
+    if (!inBounds(pos))
+        return std::nullopt;
+    auto const& square = positions_[pos.x][pos.y];
+    if (square.occupied())
+        return square.piece;
+    else
+        return std::nullopt;
+}
+
+bool Board::inBounds(Board::Position_t const& pos) const noexcept {
+    return pos.x < positions_.size() && pos.y < positions_.size();
+}
+
 bool Board::valid(Board::Position_t const& pos) const noexcept {
-    return positions_.find(pos) != positions_.end();
+    return inBounds(pos) && positions_[pos.x][pos.y].valid();
 }
 
 bool Board::empty(Position_t const& pos) const noexcept {
-    auto it = positions_.find(pos);
-    return it != positions_.end() && !(it->second);
+    return inBounds(pos) && positions_[pos.x][pos.y].empty();
 }
 
 bool Board::occupied(Position_t const& pos) const noexcept {
-    auto it = positions_.find(pos);
-    return it != positions_.end() && it->second;
+    return inBounds(pos) && positions_[pos.x][pos.y].occupied();
 }
-
-#include <cstddef>
 
 void Board::addMovement(Piece_cpt p, Position_t const& tile, Movements_t& m) {
     m.insert(Movements_t::value_type{p, tile});
@@ -125,7 +142,7 @@ bool Board::input(Move const& move) {
     }
 }
 
-bool Board::inputQuick(Move const& move) {
+void Board::inputQuick(Move const& move) {
     auto piece = find(move.from);
     auto enemy = find(move.to);
 
@@ -135,13 +152,11 @@ bool Board::inputQuick(Move const& move) {
 
     movePiece(piece.value(), move.to);
     update();
-    return true;
 }
 
 void Board::movePiece(Piece_cpt piece, Position_t const& to) {
-    positions_.at(piece->pos) = std::nullopt;
-    positions_.erase(to);
-    positions_.emplace(to, piece);
+    positions_[piece->pos.x][piece->pos.y].state = Square::EMPTY;
+    positions_[to.x][to.y].occupy(piece);
     piece->move(to);
 }
 

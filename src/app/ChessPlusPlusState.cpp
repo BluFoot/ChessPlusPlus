@@ -34,8 +34,8 @@ void ChessPlusPlusState::onKeyPressed(sf::Keyboard::Key key, bool /*alt*/, bool 
     }
 }
 void ChessPlusPlusState::onMouseMoved(int x, int y) {
-    target.x = static_cast<std::uint8_t>(x / board.config.cellWidth());
-    target.y = static_cast<std::uint8_t>(y / board.config.cellHeight());
+    target.x = static_cast<board::Board::Coord_t>(x / board.config.cellWidth());
+    target.y = static_cast<board::Board::Coord_t>(y / board.config.cellHeight());
 }
 void ChessPlusPlusState::onLButtonPressed(int x, int y) {
 }

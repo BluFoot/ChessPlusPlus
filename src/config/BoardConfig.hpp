@@ -35,7 +35,6 @@ class BoardConfig: public Configuration
     using Suits_t = std::vector<SuitClass_t>;
 
   private:
-    BoardSize_t board_width, board_height;
     Suits_t players;
     CellSize_t cell_width, cell_height;
     Layout_t layout;
@@ -47,11 +46,9 @@ class BoardConfig: public Configuration
      *
      * \param The ResourcesConfig to use for resource configuration.
      */
-    BoardConfig(ResourcesConfig& res);
-    virtual ~BoardConfig() = default;
+    explicit BoardConfig(ResourcesConfig& res);
+    ~BoardConfig() override = default;
 
-    BoardSize_t boardWidth() const noexcept { return board_width; }
-    BoardSize_t boardHeight() const noexcept { return board_height; }
     Suits_t suits() const noexcept { return players; }
     Layout_t const& initialLayout() const noexcept { return layout; }
     CellSize_t cellWidth() const noexcept { return cell_width; }

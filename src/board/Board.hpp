@@ -33,8 +33,26 @@ class Board
     using Piece_pt = piece::Piece*;
     using Piece_cpt = Piece_pt const;
     using Pieces_t = std::vector<std::unique_ptr<piece::Piece>>;
-    using Positions_t = std::unordered_map<Position_t, std::optional<Piece_cpt>>;
+    using Coord_t = Position_t::Coord_t;
     using Players_t = std::unordered_map<Suit_t, PlayerDetails>;
+
+    static constexpr Coord_t BOARD_SIZE = 16;
+    struct Square
+    {
+        enum SquareState { INVALID, EMPTY, OCCUPIED };
+        SquareState state;
+        Piece_pt piece; // only valid if state is occupied
+
+        void occupy(Piece_cpt p) {
+            state = OCCUPIED;
+            piece = p;
+        };
+
+        bool valid() const { return state != INVALID; };
+        bool empty() const { return state == EMPTY; };
+        bool occupied() const { return state == OCCUPIED; };
+    };
+    using Positions_t = std::array<std::array<Square, BOARD_SIZE>, BOARD_SIZE>;
 
     struct Move
     {
@@ -83,14 +101,8 @@ class Board
         return factory().insert({type, ctor}).first;
     }
 
-    auto find(Position_t const& pos) const noexcept -> std::optional<Piece_cpt> {
-        auto it = positions_.find(pos);
-        if (it != positions_.end() && it->second)
-            return it->second;
-        else
-            return std::nullopt;
-    }
-
+    std::optional<Piece_cpt> find(Position_t const& pos) const noexcept;
+    bool inBounds(Position_t const& pos) const noexcept;
     bool valid(Position_t const& pos) const noexcept;
     bool empty(Position_t const& pos) const noexcept;
     bool occupied(Position_t const& pos) const noexcept;
@@ -113,7 +125,7 @@ class Board
   public:
 
     bool input(Move const& move);
-    bool inputQuick(Move const& move);
+    void inputQuick(Move const& move);
 
   private:
     void movePiece(Piece_cpt piece, Position_t const& to);

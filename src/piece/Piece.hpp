@@ -46,12 +46,7 @@ class Piece
     std::size_t const& moves = m;
     Score_t const& value = v;
 
-    Piece(board::Board& b,
-          Position_t const& pos,
-          Suit_t const& s,
-          Class_t const& pc,
-          Score_t v,
-          size_t m);
+    Piece(board::Board& b, Position_t const& pos, Suit_t const& s, Class_t const& pc, Score_t v, size_t m);
     virtual ~Piece() = default;
     virtual std::unique_ptr<Piece> clone(board::Board& board) = 0;
 
@@ -70,7 +65,6 @@ class Piece
         moveUpdate(from, to);
         ++m;
     }
-
 
     virtual void moveUpdate(Position_t const& from, Position_t const& to) {
     }
