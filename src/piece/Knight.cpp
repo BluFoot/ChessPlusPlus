@@ -7,11 +7,11 @@ namespace piece
 static auto KnightRegistration = board::Board::registerPieceClass(Knight::pclass_, [](board::Board& b,
                                                                                       board::Board::Position_t const& p,
                                                                                       board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
-    return board::Board::Pieces_t::value_type(new Knight(b, p, s, 3, 0));
+    return board::Board::Pieces_t::value_type(new Knight(b, p, s, 3));
 });
 
 std::unique_ptr<Piece> Knight::clone(board::Board& board) {
-    return std::make_unique<Knight>(board, pos, suit, value, moves, trajectories, capturings);
+    return std::make_unique<Knight>(board, pos, suit, value, trajectories, capturings);
 }
 
 void Knight::calcTrajectory() {

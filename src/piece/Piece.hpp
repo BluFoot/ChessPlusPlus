@@ -38,7 +38,6 @@ class Piece
     Suit_t s_;
     Class_t c_;
     Score_t v_;
-    std::size_t m_;
 
     Movements_t trajectories_;
     Movements_t capturings_;
@@ -47,7 +46,6 @@ class Piece
     Position_t const& pos = p_;
     Suit_t const& suit = s_;
     virtual char const* pclass() const = 0;
-    std::size_t const& moves = m_;
     Score_t const& value = v_;
 
     Movements_t const& trajectories = trajectories_;
@@ -57,7 +55,6 @@ class Piece
           Position_t const& p,
           Suit_t const& s,
           Score_t v,
-          size_t m,
           Movements_t const& trajectories = {},
           Movements_t const& capturings = {});
     virtual ~Piece() = default;

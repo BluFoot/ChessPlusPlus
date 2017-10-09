@@ -20,7 +20,8 @@ Pawn::Pawn(board::Board& b,
            util::Direction const& face,
            Movements_t const& trajectories,
            Movements_t const& capturings)
-    : Piece{b, pos_, s_, v, m, trajectories, capturings}
+    : Piece{b, pos_, s_, v, trajectories, capturings}
+      , moves{m}
       , facing{face} {
 }
 

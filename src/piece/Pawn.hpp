@@ -10,6 +10,7 @@ namespace piece
 {
 class Pawn: public virtual Piece
 {
+    size_t moves;
     util::Direction facing;
 
   public:

@@ -7,11 +7,11 @@ namespace piece
 static auto RookRegistration = board::Board::registerPieceClass(Rook::pclass_, [](board::Board& b,
                                                                                   board::Board::Position_t const& p,
                                                                                   board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
-    return board::Board::Pieces_t::value_type(new Rook(b, p, s, 5, 0));
+    return board::Board::Pieces_t::value_type(new Rook(b, p, s, 5));
 });
 
 std::unique_ptr<Piece> Rook::clone(board::Board& board) {
-    return std::make_unique<Rook>(board, pos, suit, value, moves, trajectories, capturings);
+    return std::make_unique<Rook>(board, pos, suit, value, trajectories, capturings);
 }
 
 void Rook::calcTrajectory() {
