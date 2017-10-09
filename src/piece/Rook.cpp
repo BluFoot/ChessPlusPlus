@@ -10,12 +10,8 @@ static auto RookRegistration = board::Board::registerPieceClass("Rook", [](board
     return board::Board::Pieces_t::value_type(new Rook(b, p, s, "Rook", 5, 0));
 });
 
-Rook::Rook(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t const& pc, Score_t const& v, size_t m)
-    : Piece{b, pos_, s_, pc, v, m} {
-}
-
 std::unique_ptr<Piece> Rook::clone(board::Board& board) {
-    return std::make_unique<Rook>(board, pos, suit, pclass, value, moves);
+    return std::make_unique<Rook>(board, pos, suit, pclass, value, moves, trajectories, capturings);
 }
 
 void Rook::calcTrajectory() {

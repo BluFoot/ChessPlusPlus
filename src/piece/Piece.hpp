@@ -29,6 +29,7 @@ class Piece
     using Suit_t     = config::BoardConfig::SuitClass_t;
     using Class_t    = config::BoardConfig::PieceClass_t;
     using Score_t    = config::BoardConfig::Score_t;
+    using Movements_t = std::vector<Position_t>;
 
     board::Board& board;
 
@@ -39,8 +40,8 @@ class Piece
     Score_t v_;
     std::size_t m_;
 
-    std::vector<Position_t> trajectories_;
-    std::vector<Position_t> capturings_;
+    Movements_t trajectories_;
+    Movements_t capturings_;
 
   public:
     Position_t const& pos = p_;
@@ -49,10 +50,17 @@ class Piece
     std::size_t const& moves = m_;
     Score_t const& value = v_;
 
-    std::vector<Position_t> const& trajectories = trajectories_;
-    std::vector<Position_t> const& capturings = capturings_;
+    Movements_t const& trajectories = trajectories_;
+    Movements_t const& capturings = capturings_;
 
-    Piece(board::Board& b, Position_t const& p, Suit_t const& s, Class_t const& c, Score_t v, size_t m);
+    Piece(board::Board& b,
+          Position_t const& p,
+          Suit_t const& s,
+          Class_t const& c,
+          Score_t v,
+          size_t m,
+          Movements_t const& trajectories = {},
+          Movements_t const& capturings = {});
     virtual ~Piece() = default;
     virtual std::unique_ptr<Piece> clone(board::Board& board) = 0;
 

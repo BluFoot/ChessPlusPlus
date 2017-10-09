@@ -53,10 +53,6 @@ Board::Board(const Board& board)
         }
     }
 
-    for (auto const& piece : pieces_) {
-        piece->makeTrajectory();
-    }
-
     turn_ = std::find(player_order_.begin(), player_order_.end(), *board.turn_);
     if (board.winner_) {
         winner_ = players_.find((*board.winner_)->first);

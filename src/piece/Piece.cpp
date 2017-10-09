@@ -8,13 +8,22 @@ namespace chesspp
 {
 namespace piece
 {
-Piece::Piece(board::Board& b, Position_t const& p, Suit_t const& s, Class_t const& c, Score_t v, size_t m)
+Piece::Piece(board::Board& b,
+             Position_t const& p,
+             Suit_t const& s,
+             Class_t const& c,
+             Score_t v,
+             size_t m,
+             Movements_t const& trajectories,
+             Movements_t const& capturings)
     : board(b) //can't use {}
       , p_{p}
       , s_{s}
       , c_{c}
       , v_{v}
-      , m_{m} {}
+      , m_{m}
+      , trajectories_{trajectories}
+      , capturings_{capturings} {}
 
 void Piece::makeTrajectory() {
     trajectories_.clear();

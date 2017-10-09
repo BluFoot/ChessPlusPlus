@@ -11,7 +11,7 @@ namespace piece
 class Rook: public virtual Piece
 {
   public:
-    Rook(board::Board& b, Position_t const& pos, Suit_t const& s, Class_t const& pc, Score_t const& v, size_t m);
+    using Piece::Piece;
     virtual std::unique_ptr<Piece> clone(board::Board& board) override;
 
   protected:

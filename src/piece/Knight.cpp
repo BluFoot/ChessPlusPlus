@@ -10,12 +10,8 @@ static auto KnightRegistration = board::Board::registerPieceClass("Knight", [](b
     return board::Board::Pieces_t::value_type(new Knight(b, p, s, "Knight", 3, 0));
 });
 
-Knight::Knight(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t const& pc, Score_t const& v, size_t m)
-    : Piece{b, pos_, s_, pc, v, m} {
-}
-
 std::unique_ptr<Piece> Knight::clone(board::Board& board) {
-    return std::make_unique<Knight>(board, pos, suit, pclass, value, moves);
+    return std::make_unique<Knight>(board, pos, suit, pclass, value, moves, trajectories, capturings);
 }
 
 void Knight::calcTrajectory() {

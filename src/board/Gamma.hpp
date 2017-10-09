@@ -16,10 +16,10 @@ class Gamma
     Suit_t player;
 
   public:
-    std::optional<Move> chooseMove(Board board);
+    Move chooseMove(Board board);
 
   private:
-    int calc(Board const& board, size_t depth);
+    std::pair<Gamma::Move, int> calc(Board const& board, size_t depth);
     int evalBoard(const Board& board, const Suit_t& turn);
 };
 }

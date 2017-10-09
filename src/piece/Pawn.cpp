@@ -18,13 +18,15 @@ Pawn::Pawn(board::Board& b,
            Class_t const& pc,
            Score_t const& v,
            size_t m,
-           util::Direction const& face)
-    : Piece{b, pos_, s_, pc, v, m}
+           util::Direction const& face,
+           Movements_t const& trajectories,
+           Movements_t const& capturings)
+    : Piece{b, pos_, s_, pc, v, m, trajectories, capturings}
       , facing{face} {
 }
 
 std::unique_ptr<Piece> Pawn::clone(board::Board& board) {
-    return std::make_unique<Pawn>(board, pos, suit, pclass, value, moves, facing);
+    return std::make_unique<Pawn>(board, pos, suit, pclass, value, moves, facing, trajectories, capturings);
 }
 
 void Pawn::moveUpdate(const Piece::Position_t& from, const Piece::Position_t& to) {

@@ -58,9 +58,7 @@ bool ChessPlusPlusState::waitingForUser() {
 }
 
 void ChessPlusPlusState::aiMove() {
-    auto move = gamma.chooseMove(board);
-    if (move)
-        board.input(move.value());
+    board.input(gamma.chooseMove(board));
     nextTurn();
 }
 

@@ -10,12 +10,8 @@ static auto KingRegistration = board::Board::registerPieceClass("King", [](board
     return board::Board::Pieces_t::value_type(new King(b, p, s, "King", 20, 0));
 });
 
-King::King(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t const& pc, Score_t const& v, size_t m)
-    : Piece{b, pos_, s_, pc, v, m} {
-}
-
 std::unique_ptr<Piece> King::clone(board::Board& board) {
-    return std::make_unique<King>(board, pos, suit, pclass, value, moves);
+    return std::make_unique<King>(board, pos, suit, pclass, value, moves, trajectories, capturings);
 }
 
 void King::calcTrajectory() {
