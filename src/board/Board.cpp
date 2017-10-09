@@ -55,35 +55,42 @@ Board::Board(const Board& board)
     }
 }
 
+bool Board::valid(Board::Position_t const& pos) const noexcept {
+    return positions_.find(pos) != positions_.end();
+}
+
+bool Board::empty(Position_t const& pos) const noexcept {
+    auto it = positions_.find(pos);
+    return it != positions_.end() && !(it->second);
+}
+
 bool Board::occupied(Position_t const& pos) const noexcept {
     auto it = positions_.find(pos);
     return it != positions_.end() && it->second;
 }
 
-bool Board::valid(Board::Position_t const& pos) const noexcept {
-    return positions_.find(pos) != positions_.end();
+#include <cstddef>
+
+void Board::addMovement(Piece_cpt p, Position_t const& tile, Movements_t& m) {
+    m.insert(Movements_t::value_type{p, tile});
 }
 
-void Board::addMovement(piece::Piece const& p, Position_t const& tile, Movements_t& m) {
-    m.insert(Movements_t::value_type{&p, tile});
-}
-
-void Board::addTrajectory(piece::Piece const& p, const Board::Position_t& tile) {
+void Board::addTrajectory(Piece_cpt p, const Board::Position_t& tile) {
     addMovement(p, tile, trajectories);
 }
-void Board::addCapturing(piece::Piece const& p, const Board::Position_t& tile) {
+void Board::addCapturing(Piece_cpt p, const Board::Position_t& tile) {
     addMovement(p, tile, capturings);
 }
 
-auto Board::pieceMovement(piece::Piece const& p, Movements_t const& m) const noexcept -> MovementsRange {
-    auto range = m.equal_range(&p);
+auto Board::pieceMovement(Piece_cpt p, Movements_t const& m) const noexcept -> MovementsRange {
+    auto range = m.equal_range(p);
     return {{range.first, range.second}};
 }
 
-auto Board::pieceTrajectory(piece::Piece const& p) const noexcept -> MovementsRange {
+auto Board::pieceTrajectory(Piece_cpt p) const noexcept -> MovementsRange {
     return pieceMovement(p, trajectories);
 }
-auto Board::pieceCapturing(piece::Piece const& p) const noexcept -> MovementsRange {
+auto Board::pieceCapturing(Piece_cpt p) const noexcept -> MovementsRange {
     return pieceMovement(p, capturings);
 }
 
@@ -98,48 +105,46 @@ bool Board::input(Move const& move) {
         return false;
     }
 
-    auto it = find(move.from);
-    if (it == positions_.end() || !(it->second)) {
+    auto piece = find(move.from);
+    if (!piece) {
         std::cerr << "no piece found at source position" << std::endl;
         return false;
     }
 
-    auto piece = it->second.value();
-    if (piece->suit != *turn_) {
+    if (piece.value()->suit != *turn_) {
         std::cerr << "can't move a piece that doesn't to you" << std::endl;
         return false;
     }
 
-    auto jt = find(move.to);
-    if (jt == end() || !(jt->second)) {
-        return moveTo(piece, move.to);
+    auto enemy = find(move.to);
+    if (!enemy) {
+        return moveTo(piece.value(), move.to);
     } else {
-        auto enemy = jt->second.value();
-        return capture(piece, enemy, move.to);
+        return capture(piece.value(), enemy.value(), move.to);
     }
 }
 
 bool Board::inputQuick(Move const& move) {
-    auto piece = find(move.from)->second.value();
-    auto enemy_it = find(move.to);
+    auto piece = find(move.from);
+    auto enemy = find(move.to);
 
-    if (enemy_it != end() && enemy_it->second) {
-        kill(piece->suit, enemy_it->second.value());
+    if (enemy) {
+        kill(piece.value()->suit, enemy.value());
     }
 
-    movePiece(piece, move.to);
+    movePiece(piece.value(), move.to);
     update();
     return true;
 }
 
-void Board::movePiece(piece::Piece* const piece, Position_t const& to) {
+void Board::movePiece(Piece_cpt piece, Position_t const& to) {
     positions_.at(piece->pos) = std::nullopt;
     positions_.erase(to);
     positions_.emplace(to, piece);
     piece->move(to);
 }
 
-bool Board::moveTo(piece::Piece* const piece, Position_t const& to) {
+bool Board::moveTo(Piece_cpt piece, Position_t const& to) {
     if (occupied(to)) {
         std::cerr << "target position occupied" << std::endl;
         return false;
@@ -159,7 +164,7 @@ bool Board::moveTo(piece::Piece* const piece, Position_t const& to) {
     return true;
 }
 
-bool Board::capture(piece::Piece* const piece, const piece::Piece* const enemy, Position_t const& to) {
+bool Board::capture(Piece_cpt piece, Piece_cpt enemy, Position_t const& to) {
     if (enemy->suit == piece->suit) {
         std::cerr << "can't capture your own piece" << std::endl;
         return false;
@@ -180,7 +185,7 @@ bool Board::capture(piece::Piece* const piece, const piece::Piece* const enemy, 
     return true;
 }
 
-void Board::kill(const Board::Suit_t& suit, const piece::Piece* const enemy) {
+void Board::kill(const Board::Suit_t& suit, const Piece_cpt enemy) {
     if (enemy->pclass == "King") {
         players_.at(enemy->suit).alive = false;
         std::clog << "Player " << (enemy->suit) << " has been eliminated" << std::endl;

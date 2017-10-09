@@ -23,7 +23,7 @@ BoardConfig::BoardConfig(ResourcesConfig& res)
             if (piece.type() != util::JsonReader::Type::Null) //it is OK if suit is null
             {
                 if (std::string(piece) == "Empty") {
-                    layout[{c, r}] = std::experimental::nullopt;
+                    layout[{c, r}] = std::nullopt;
                 } else {
                     layout[{c, r}] = std::make_pair<PieceClass_t, SuitClass_t>(piece, suit);
                 }

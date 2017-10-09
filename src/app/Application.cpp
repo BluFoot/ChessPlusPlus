@@ -1,4 +1,3 @@
-#include <zconf.h>
 #include "Application.hpp"
 
 namespace chesspp

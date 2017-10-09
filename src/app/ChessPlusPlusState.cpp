@@ -19,14 +19,12 @@ ChessPlusPlusState::ChessPlusPlusState(Application& app_, sf::RenderWindow& disp
 
 void ChessPlusPlusState::onRender() {
     graphics.drawBoard(board);
-    if (selected != board.end() && selected->second) {
-        auto piece = selected->second.value();
-        graphics.drawTrajectory(*piece);
+    if (selected) {
+        graphics.drawTrajectory(selected.value());
     }
-    const auto it = board.find(target);
-    if (it != board.end() && it->second) {
-        auto piece = it->second.value();
-        graphics.drawTrajectory(*piece, piece->suit != board.turn());
+    auto piece = board.find(target);
+    if (piece) {
+        graphics.drawTrajectory(piece.value(), piece.value()->suit != board.turn());
     }
 }
 
@@ -42,10 +40,10 @@ void ChessPlusPlusState::onMouseMoved(int x, int y) {
 void ChessPlusPlusState::onLButtonPressed(int x, int y) {
 }
 void ChessPlusPlusState::onLButtonReleased(int x, int y) {
-    if (selected == board.end()) {
+    if (!selected) {
         select();
     } else {
-        if (board.input({selected->first, target})) {
+        if (board.input({selected.value()->pos, target})) {
             nextTurn();
         } else {
             select();
@@ -56,26 +54,30 @@ void ChessPlusPlusState::onLButtonReleased(int x, int y) {
 bool ChessPlusPlusState::waitingForUser() {
     //return true;
     //return false;
-    return board.turn() == "Blue";
+    return board.turn() == "Red";
 }
 
 void ChessPlusPlusState::aiMove() {
-    auto move = gamma.calc(board);
+    auto move = gamma.chooseMove(board);
     if (move)
         board.input(move.value());
     nextTurn();
 }
 
 void ChessPlusPlusState::select() {
-    selected = board.find(target); //doesn't matter if board.end(), selected won't change then
-    if (selected != board.end() && selected->second.value() && selected->second.value()->suit != board.turn()) {
-        selected = board.end(); //can't select enemy pieces
+    selected = board.find(target);
+    if (selected && selected.value()->suit != board.turn()) {
+        selected = std::nullopt; //can't select enemy pieces
     }
 }
 
 void ChessPlusPlusState::nextTurn() {
-    selected = board.end();
+    selected.reset();
     target = {127, 127};
+    auto winner = board.winner();
+    if (winner) {
+        app.changeState<GameOverState>(app, display, winner.value()->first, std::to_string(winner.value()->second.score));
+    }
 }
 
 }

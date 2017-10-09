@@ -17,11 +17,11 @@ Piece::Piece(board::Board& b, Position_t const& pos_, Suit_t const& s_, Class_t 
       , m{m} {}
 
 void Piece::addTrajectory(Position_t const& tile) {
-    board.addTrajectory(*this, tile);
+    board.addTrajectory(this, tile);
 }
 
 void Piece::addCapturing(Position_t const& tile) {
-    board.addCapturing(*this, tile);
+    board.addCapturing(this, tile);
 }
 
 void Piece::transform(const Piece::Class_t& to) {

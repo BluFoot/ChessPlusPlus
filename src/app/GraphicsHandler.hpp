@@ -82,7 +82,7 @@ class GraphicsHandler
      * \param p The piece for which to draw trajectory and capturings.
      * \param enemy true if the piece is an enemy piece, false otherwise.
      */
-    void drawTrajectory(piece::Piece const& p, bool enemy = false);
+    void drawTrajectory(board::Board::Piece_cpt p, bool enemy = false);
 
     /**
      * \brief

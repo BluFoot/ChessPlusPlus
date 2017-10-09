@@ -11,9 +11,15 @@ class Gamma
   public:
     using Move = Board::Move;
     using Suit_t = PlayerDetails::Suit_t;
-    std::optional<Move> calc(Board const& board);
 
   private:
+    Suit_t player;
+
+  public:
+    std::optional<Move> chooseMove(Board const& board);
+
+  private:
+    int calc(Board const& board, size_t depth);
     std::vector<Move> legalMoves(Board const& board);
     int evalBoard(const Board& board, const Suit_t& turn);
 };

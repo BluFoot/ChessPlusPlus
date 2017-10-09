@@ -8,29 +8,49 @@ namespace chesspp
 {
 namespace board
 {
-std::optional<Board::Move> Gamma::calc(Board const& board) {
+std::optional<Gamma::Move> Gamma::chooseMove(Board const& board) {
     auto start = std::chrono::system_clock::now();
-    std::optional<Board::Move> best_move;
+    player = board.turn();
 
-    auto turn = board.turn();
-    auto starting_score = evalBoard(board, turn);
-    int best_diff = std::numeric_limits<int>::min();
+    std::optional<Move> best_move;
+    int best_score = std::numeric_limits<int>::min();
 
     for (auto const& move : legalMoves(board)) {
         board::Board board_copy{board};
         if (board_copy.inputQuick(move)) {
-            auto score = evalBoard(board_copy, turn);
-            if (score - starting_score > best_diff) {
-                best_diff = score - starting_score;
+            auto score = calc(board_copy, 2);
+            std::clog << move << " = " << score << std::endl;
+            if (score > best_score) {
+                best_score = score;
                 best_move = move;
             }
         }
     }
 
     auto duration = std::chrono::system_clock::now() - start;
-    std::clog << "calc() for " << turn << " took " << std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()
-              << "ms" << std::endl;
+    std::clog << "calc() " << board.turn() << ": " << best_move.value() << " "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() << "ms" << std::endl;
     return best_move;
+}
+
+int Gamma::calc(Board const& board, size_t depth) {
+    if (depth == 0) {
+        return evalBoard(board, player);
+    }
+
+    int best_score = std::numeric_limits<int>::min();
+
+    for (auto const& move : legalMoves(board)) {
+        board::Board board_copy{board};
+        if (board_copy.inputQuick(move)) {
+            auto score = calc(board_copy, depth - 1);
+            if (score > best_score) {
+                best_score = score;
+            }
+        }
+    }
+
+    return best_score;
 }
 
 std::vector<Gamma::Move> Gamma::legalMoves(Board const& board) {
@@ -39,17 +59,15 @@ std::vector<Gamma::Move> Gamma::legalMoves(Board const& board) {
         if (piece->suit != board.turn())
             continue;
 
-        auto trajectories = board.pieceTrajectory(*piece);
-        for (auto const& trajectory : trajectories) {
-            if (!board.occupied(trajectory.second)) {
+        for (auto const& trajectory : board.pieceTrajectory(piece.get())) {
+            if (board.empty(trajectory.second)) {
                 moves.emplace_back(Move{piece->pos, trajectory.second});
             }
         }
 
-        auto capturings = board.pieceCapturing(*piece);
-        for (auto const& capturing : capturings) {
+        for (auto const& capturing : board.pieceCapturing(piece.get())) {
             auto enemy = board.find(capturing.second);
-            if (enemy != board.end() && enemy->second && piece->suit != enemy->second.value()->suit) {
+            if (enemy && piece->suit != enemy.value()->suit) {
                 moves.emplace_back(Move{piece->pos, capturing.second});
             }
         }

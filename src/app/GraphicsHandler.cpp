@@ -41,26 +41,26 @@ void GraphicsHandler::drawPieceAt(piece::Piece const& p, sf::Vector2i const& pos
     piece.setPosition(pos.x - (board_config.cellWidth() / 2), pos.y - (board_config.cellHeight() / 2));
     display.draw(piece);
 }
-void GraphicsHandler::drawTrajectory(piece::Piece const& p, bool enemy) {
+void GraphicsHandler::drawTrajectory(board::Board::Piece_cpt p, bool enemy) {
     {
         auto& sprite = (enemy ? enemy_move : valid_move);
-        for (auto const& it : p.board.pieceTrajectory(p)) {
-            if (!p.board.occupied(it.second)) {
+        for (auto const& it : p->board.pieceTrajectory(p)) {
+            if (!p->board.occupied(it.second)) {
                 drawSpriteAtCell(sprite, it.second.x, it.second.y);
             }
         }
     }
     {
         auto& sprite = (enemy ? enemy_capture : valid_capture);
-        for (auto const& m : p.board.pieceCapturing(p)) {
-            auto it = p.board.find(m.second);
-            if (it != p.board.end() && it->second && it->second.value()->suit != p.suit) {
+        for (auto const& m : p->board.pieceCapturing(p)) {
+            auto piece = p->board.find(m.second);
+            if (piece && piece.value()->suit != p->suit) {
                 drawSpriteAtCell(sprite, m.second.x, m.second.y);
-                auto jt = std::find_if(p.board.pieceTrajectories().begin(), p.board.pieceTrajectories().end(),
+                auto jt = std::find_if(p->board.pieceTrajectories().begin(), p->board.pieceTrajectories().end(),
                                        [&](board::Board::Movements_t::value_type const& m) {
                                            return m.first->pos == m.second;
                                        });
-                if (jt != p.board.pieceTrajectories().end()) {
+                if (jt != p->board.pieceTrajectories().end()) {
                     drawPiece(*(jt->first)); //redraw
                 }
                 break;
