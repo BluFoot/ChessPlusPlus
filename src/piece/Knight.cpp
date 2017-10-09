@@ -24,8 +24,11 @@ void Knight::calcTrajectory() {
     for (Position_t m : {Position_t(1, -2), Position_t(2, -1), Position_t(2, 1), Position_t(1, 2), Position_t(-1, 2),
                          Position_t(-2, 1), Position_t(-2, -1), Position_t(-1, -2)}) {
         Position_t t = Position_t(pos).move(m.x, m.y);
-        addTrajectory(t);
-        addCapturing(t);
+        if (board.empty(t)) {
+            addTrajectory(t);
+        } else if (board.occupied(t)) {
+            addCapturing(t);
+        }
     }
 }
 }

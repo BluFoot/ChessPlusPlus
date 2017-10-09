@@ -53,8 +53,8 @@ void ChessPlusPlusState::onLButtonReleased(int x, int y) {
 
 bool ChessPlusPlusState::waitingForUser() {
     //return true;
-    //return false;
-    return board.turn() == "Red";
+    return false;
+    //return board.turn() == "Red";
 }
 
 void ChessPlusPlusState::aiMove() {

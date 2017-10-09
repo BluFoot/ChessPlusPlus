@@ -23,8 +23,11 @@ void King::calcTrajectory() {
     using Dir = util::Direction;
     for (Dir d : {Dir::North, Dir::NorthEast, Dir::East, Dir::SouthEast, Dir::South, Dir::SouthWest, Dir::West, Dir::NorthWest}) {
         Position_t t = Position_t(pos).move(d);
-        addTrajectory(t);
-        addCapturing(t);
+        if (board.empty(pos)) {
+            addTrajectory(t);
+        } else if (board.occupied(pos)) {
+            addCapturing(t);
+        }
     }
 }
 }

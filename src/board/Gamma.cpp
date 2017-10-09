@@ -12,7 +12,7 @@ std::optional<Gamma::Move> Gamma::chooseMove(Board const& board) {
     auto start = std::chrono::system_clock::now();
     player = board.turn();
 
-    std::optional < Move > best_move;
+    std::optional<Move> best_move;
     int best_score = std::numeric_limits<int>::min();
 
     for (auto const& move : legalMoves(board)) {

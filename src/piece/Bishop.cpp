@@ -24,10 +24,12 @@ void Bishop::calcTrajectory() {
     for (Dir d : {Dir::NorthEast, Dir::SouthEast, Dir::SouthWest, Dir::NorthWest}) {
         Position_t t;
         for (signed i = 1; board.valid(t = Position_t(pos).move(d, i)); ++i) {
-            addCapturing(t);
-            if (!board.occupied(t)) {
+            if (board.empty(t)) {
                 addTrajectory(t);
-            } else break; //can't jump over pieces
+            } else if (board.occupied(t)) {
+                addCapturing(t);
+                break;
+            }
         }
     }
 }

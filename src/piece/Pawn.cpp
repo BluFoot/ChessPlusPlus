@@ -53,23 +53,21 @@ void Pawn::calcTrajectory() {
         //On any turn they can move diagonally forward to capture,
         //but may not capture when moving straight forward.
         auto forward = Position_t(pos).move(facing);
-        if (!board.occupied(forward)) {
+        if (board.empty(forward)) {
             addTrajectory(forward);
             if (moves == 0) {
                 auto forward2 = Position_t(pos).move(facing, 2);
-                if (!board.occupied(forward2)) {
+                if (board.empty(forward2)) {
                     addTrajectory(forward2);
                 }
             }
         }
 
-        Position_t diagr = Position_t(pos).move(Rotate(facing, +1));
-        if (board.valid(diagr)) { //can capture diagonally forward-right
-            addCapturing(diagr);
-        }
-        Position_t diagl = Position_t(pos).move(Rotate(facing, -1));
-        if (board.valid(diagl)) { //can capture diagonally forward-left
-            addCapturing(diagl);
+        for (auto rotation : {+1, -1}) {
+            Position_t diagr = Position_t(pos).move(Rotate(facing, rotation));
+            if (board.occupied(diagr)) { //can capture diagonally forward-right
+                addCapturing(diagr);
+            }
         }
     }
 }
