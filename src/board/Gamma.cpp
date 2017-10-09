@@ -15,14 +15,23 @@ std::optional<Gamma::Move> Gamma::chooseMove(Board board) {
     std::optional<Move> best_move;
     int best_score = std::numeric_limits<int>::min();
 
-    for (auto const& move : legalMoves(board)) {
-        Board board_copy{board};
-        board_copy.inputQuick(move);
-        auto score = calc(board_copy, 2);
-        //std::clog << move << " = " << score << std::endl;
-        if (score > best_score) {
-            best_score = score;
-            best_move = move;
+    for (auto const& piece : board.pieces()) {
+        if (piece->suit != board.turn()) {
+            continue;
+        }
+
+        auto const& from = piece->pos;
+        for (auto const& targets : {piece->trajectories, piece->capturings}) {
+            for (auto const& to : targets) {
+                Move move{from, to};
+                Board board_copy{board};
+                board_copy.inputQuick(move);
+                auto score = calc(board_copy, 2);
+                if (score > best_score) {
+                    best_score = score;
+                    best_move = move;
+                }
+            }
         }
     }
 
@@ -39,38 +48,26 @@ int Gamma::calc(Board const& board, size_t depth) {
 
     int best_score = std::numeric_limits<int>::min();
 
-    for (auto const& move : legalMoves(board)) {
-        Board board_copy{board};
-        board_copy.inputQuick(move);
-        auto score = calc(board_copy, depth - 1);
-        if (score > best_score) {
-            best_score = score;
+    for (auto const& piece : board.pieces()) {
+        if (piece->suit != board.turn()) {
+            continue;
+        }
+
+        auto const& from = piece->pos;
+        for (auto const& targets : {piece->trajectories, piece->capturings}) {
+            for (auto const& to : targets) {
+                Move move{from, to};
+                Board board_copy{board};
+                board_copy.inputQuick(move);
+                auto score = calc(board_copy, depth - 1);
+                if (score > best_score) {
+                    best_score = score;
+                }
+            }
         }
     }
 
     return best_score;
-}
-
-std::vector<Gamma::Move> Gamma::legalMoves(Board const& board) {
-    std::vector<Move> moves;
-    for (auto const& piece : board.pieces()) {
-        if (piece->suit != board.turn())
-            continue;
-
-        for (auto const& trajectory : piece->trajectories) {
-            if (board.empty(trajectory)) {
-                moves.emplace_back(Move{piece->pos, trajectory});
-            }
-        }
-
-        for (auto const& capturing : piece->capturings) {
-            auto enemy = board.find(capturing);
-            if (enemy && piece->suit != enemy.value()->suit) {
-                moves.emplace_back(Move{piece->pos, capturing});
-            }
-        }
-    }
-    return moves;
 }
 
 int Gamma::evalBoard(const Board& board, const Suit_t& turn) {

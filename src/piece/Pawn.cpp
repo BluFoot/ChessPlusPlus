@@ -64,9 +64,10 @@ void Pawn::calcTrajectory() {
         }
 
         for (auto rotation : {+1, -1}) {
-            Position_t diagr = Position_t(pos).move(Rotate(facing, rotation));
-            if (board.occupied(diagr)) { //can capture diagonally forward-right
-                addCapturing(diagr);
+            Position_t diag = Position_t(pos).move(Rotate(facing, rotation));
+            auto piece = board.find(diag);
+            if (piece && piece.value()->suit != suit) {
+                addCapturing(diag);
             }
         }
     }

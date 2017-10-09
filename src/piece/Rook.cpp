@@ -26,8 +26,11 @@ void Rook::calcTrajectory() {
         for (signed i = 1; board.valid(t = Position_t(pos).move(d, i)); ++i) {
             if (board.empty(t)) {
                 addTrajectory(t);
-            } else if (board.occupied(t)) {
-                addCapturing(t);
+            } else {
+                auto piece = board.find(t);
+                if (piece && piece.value()->suit != suit) {
+                    addCapturing(t);
+                }
                 break;
             }
         }

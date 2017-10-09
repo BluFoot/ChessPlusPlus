@@ -25,8 +25,11 @@ void King::calcTrajectory() {
         Position_t t = Position_t(pos).move(d);
         if (board.empty(pos)) {
             addTrajectory(t);
-        } else if (board.occupied(pos)) {
-            addCapturing(t);
+        } else {
+            auto piece = board.find(t);
+            if (piece && piece.value()->suit != suit) {
+                addCapturing(t);
+            }
         }
     }
 }

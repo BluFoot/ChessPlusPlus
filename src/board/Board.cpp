@@ -107,7 +107,7 @@ bool Board::input(Move const& move) {
     }
 
     if (piece.value()->suit != *turn_) {
-        std::cerr << "can't move a piece that doesn't to you" << std::endl;
+        std::cerr << "can't move a piece that doesn't belong to you" << std::endl;
         return false;
     }
 
