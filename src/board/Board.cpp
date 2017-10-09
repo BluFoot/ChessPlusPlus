@@ -178,7 +178,7 @@ void Board::kill(const Board::Suit_t& suit, const Piece_cpt enemy) {
         }
     }
 
-    players_.at(suit).score += enemy->value;
+    players_.at(suit).score += enemy->value();
     auto enemy_it = std::find_if(pieces_.begin(), pieces_.end(), [&](auto const& p) { return p.get() == enemy; });
     pieces_.erase(enemy_it);
 }

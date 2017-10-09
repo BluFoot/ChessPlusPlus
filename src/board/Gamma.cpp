@@ -58,7 +58,7 @@ int Gamma::evalBoard(const Board& board, const Suit_t& turn) {
     }
     for (auto const& piece : board.pieces()) {
         if (piece->suit == turn) {
-            score += piece->value;
+            score += piece->value();
         }
     }
     return score;

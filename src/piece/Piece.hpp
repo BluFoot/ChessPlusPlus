@@ -36,8 +36,6 @@ class Piece
   private:
     Position_t p_;
     Suit_t s_;
-    Class_t c_;
-    Score_t v_;
 
     Movements_t trajectories_;
     Movements_t capturings_;
@@ -46,7 +44,7 @@ class Piece
     Position_t const& pos = p_;
     Suit_t const& suit = s_;
     virtual char const* pclass() const = 0;
-    Score_t const& value = v_;
+    virtual Score_t value() const = 0;
 
     Movements_t const& trajectories = trajectories_;
     Movements_t const& capturings = capturings_;
@@ -54,7 +52,6 @@ class Piece
     Piece(board::Board& b,
           Position_t const& p,
           Suit_t const& s,
-          Score_t v,
           Movements_t const& trajectories = {},
           Movements_t const& capturings = {});
     virtual ~Piece() = default;
@@ -66,8 +63,6 @@ class Piece
 
     void addTrajectory(Position_t const& tile);
     void addCapturing(Position_t const& tile);
-
-    void transform(Class_t const& to);
 
   private:
     void move(Position_t const& to);
