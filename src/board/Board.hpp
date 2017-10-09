@@ -31,7 +31,7 @@ class Board
     using Suit_t = config::BoardConfig::SuitClass_t;
     using Suits_t = config::BoardConfig::Suits_t;
     using Pieces_t = std::set<std::unique_ptr<piece::Piece>>;
-    using Positions_t = std::unordered_map<Position_t, std::optional<const piece::Piece* const>>;
+    using Positions_t = std::unordered_map<Position_t, std::optional<piece::Piece* const>>;
     using Players_t = std::unordered_map<Suit_t, PlayerDetails>;
 
     struct Move
@@ -51,8 +51,8 @@ class Board
     config::BoardConfig const& config;
 
   private:
-    Pieces_t pieces;
-    Positions_t positions;
+    Pieces_t pieces_;
+    Positions_t positions_;
 
     Suits_t player_order_;
     Suits_t::const_iterator turn_;
@@ -71,6 +71,7 @@ class Board
     explicit Board(config::BoardConfig const& conf);
     Board(const Board& board);
 
+    Pieces_t const& pieces() const { return pieces_; }
     Suit_t turn() const { return *turn_; };
     Suits_t const& player_order() const { return player_order_; }
     Players_t const& players() const { return players_; }
@@ -80,12 +81,14 @@ class Board
         return factory().insert({type, ctor}).first;
     }
 
-    auto find(Position_t const& pos) const noexcept -> Pieces_t::const_iterator;
-    auto begin() const noexcept -> Pieces_t::const_iterator {
-        return pieces.cbegin();
+    auto find(Position_t const& pos) const noexcept -> Positions_t::const_iterator {
+        return positions_.find(pos);
     }
-    auto end() const noexcept -> Pieces_t::const_iterator {
-        return pieces.cend();
+    auto begin() const noexcept -> Positions_t::const_iterator {
+        return positions_.cbegin();
+    }
+    auto end() const noexcept -> Positions_t::const_iterator {
+        return positions_.cend();
     }
 
     bool occupied(Position_t const& pos) const noexcept;
@@ -112,10 +115,10 @@ class Board
     bool inputQuick(Move const& move);
 
   private:
-    void movePiece(Pieces_t::iterator piece, Position_t const& to);
-    bool moveTo(Pieces_t::iterator piece, Position_t const& to);
-    bool capture(Pieces_t::iterator piece, Pieces_t::iterator enemy, Position_t const& to);
-    void kill(const Board::Suit_t& suit, Pieces_t::iterator enemy);
+    void movePiece(piece::Piece* const piece, Position_t const& to);
+    bool moveTo(piece::Piece* const piece, Position_t const& to);
+    bool capture(piece::Piece* const piece, const piece::Piece* const enemy, Position_t const& to);
+    void kill(const Board::Suit_t& suit, const piece::Piece* const enemy);
 
     void update();
     void nextTurn();

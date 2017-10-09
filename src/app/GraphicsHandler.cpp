@@ -52,13 +52,13 @@ void GraphicsHandler::drawTrajectory(piece::Piece const& p, bool enemy) {
     }
     {
         auto& sprite = (enemy ? enemy_capture : valid_capture);
-        for (auto const& it : p.board.pieceCapturing(p)) {
-            auto enemy_piece = p.board.find(it.second);
-            if (enemy_piece != p.board.end() && (*enemy_piece)->suit != p.suit) {
-                drawSpriteAtCell(sprite, it.second.x, it.second.y);
+        for (auto const& m : p.board.pieceCapturing(p)) {
+            auto it = p.board.find(m.second);
+            if (it != p.board.end() && it->second && it->second.value()->suit != p.suit) {
+                drawSpriteAtCell(sprite, m.second.x, m.second.y);
                 auto jt = std::find_if(p.board.pieceTrajectories().begin(), p.board.pieceTrajectories().end(),
                                        [&](board::Board::Movements_t::value_type const& m) {
-                                           return m.first->pos == it.second;
+                                           return m.first->pos == m.second;
                                        });
                 if (jt != p.board.pieceTrajectories().end()) {
                     drawPiece(*(jt->first)); //redraw
@@ -73,7 +73,7 @@ void GraphicsHandler::drawBoard(board::Board const& b) {
 
     drawBackground();
 
-    for (auto const& pp : b) {
+    for (auto const& pp : b.pieces()) {
         drawPiece(*pp);
     }
 

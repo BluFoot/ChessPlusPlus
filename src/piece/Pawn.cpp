@@ -52,11 +52,15 @@ void Pawn::calcTrajectory() {
         //or only 1 space forward on any other turn.
         //On any turn they can move diagonally forward to capture,
         //but may not capture when moving straight forward.
-        //They may be captured via the space behind them
-        //if they just moved forward two spaces (en passant).
-        addTrajectory(Position_t(pos).move(facing));
-        if (moves == 0 && !board.occupied(Position_t(pos).move(facing))) { //first move, can't jump over pieces
-            addTrajectory(Position_t(pos).move(facing, 2));
+        auto forward = Position_t(pos).move(facing);
+        if (!board.occupied(forward)) {
+            addTrajectory(forward);
+            if (moves == 0) {
+                auto forward2 = Position_t(pos).move(facing, 2);
+                if (!board.occupied(forward2)) {
+                    addTrajectory(forward2);
+                }
+            }
         }
 
         Position_t diagr = Position_t(pos).move(Rotate(facing, +1));

@@ -10,7 +10,6 @@ namespace piece
 {
 class Pawn: public virtual Piece
 {
-    bool en_passant = true;
     util::Direction facing;
 
   public:

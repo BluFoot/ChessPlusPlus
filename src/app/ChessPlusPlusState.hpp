@@ -31,7 +31,7 @@ class ChessPlusPlusState: public AppState
     board::Board board;
     board::Gamma gamma;
 
-    board::Board::Pieces_t::iterator selected = board.end();
+    board::Board::Positions_t::const_iterator selected = board.end();
     board::Board::Position_t target;
 
   public:

@@ -19,14 +19,14 @@ ChessPlusPlusState::ChessPlusPlusState(Application& app_, sf::RenderWindow& disp
 
 void ChessPlusPlusState::onRender() {
     graphics.drawBoard(board);
-    if (selected != board.end()) {
-        graphics.drawTrajectory(**selected);
+    if (selected != board.end() && selected->second) {
+        auto piece = selected->second.value();
+        graphics.drawTrajectory(*piece);
     }
-    if (board.valid(target)) {
-        auto piece = board.find(target);
-        if (piece != board.end()) {
-            graphics.drawTrajectory(**piece, (*piece)->suit != board.turn());
-        }
+    const auto it = board.find(target);
+    if (it != board.end() && it->second) {
+        auto piece = it->second.value();
+        graphics.drawTrajectory(*piece, piece->suit != board.turn());
     }
 }
 
@@ -45,7 +45,7 @@ void ChessPlusPlusState::onLButtonReleased(int x, int y) {
     if (selected == board.end()) {
         select();
     } else {
-        if (board.input({(*selected)->pos, target})) {
+        if (board.input({selected->first, target})) {
             nextTurn();
         } else {
             select();
@@ -55,8 +55,8 @@ void ChessPlusPlusState::onLButtonReleased(int x, int y) {
 
 bool ChessPlusPlusState::waitingForUser() {
     //return true;
-    return false;
-    //return board.turn() == "Blue";
+    //return false;
+    return board.turn() == "Blue";
 }
 
 void ChessPlusPlusState::aiMove() {
@@ -68,7 +68,7 @@ void ChessPlusPlusState::aiMove() {
 
 void ChessPlusPlusState::select() {
     selected = board.find(target); //doesn't matter if board.end(), selected won't change then
-    if (selected != board.end() && (*selected)->suit != board.turn()) {
+    if (selected != board.end() && selected->second.value() && selected->second.value()->suit != board.turn()) {
         selected = board.end(); //can't select enemy pieces
     }
 }

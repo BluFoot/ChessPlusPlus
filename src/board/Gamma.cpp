@@ -35,22 +35,22 @@ std::optional<Board::Move> Gamma::calc(Board const& board) {
 
 std::vector<Gamma::Move> Gamma::legalMoves(Board const& board) {
     std::vector<Move> moves;
-    for (auto piece = board.begin(); piece != board.end(); ++piece) {
-        if ((*piece)->suit != board.turn())
+    for (auto const& piece : board.pieces()) {
+        if (piece->suit != board.turn())
             continue;
 
-        auto trajectories = board.pieceTrajectory(**piece);
+        auto trajectories = board.pieceTrajectory(*piece);
         for (auto const& trajectory : trajectories) {
             if (!board.occupied(trajectory.second)) {
-                moves.emplace_back(Move{(*piece)->pos, trajectory.second});
+                moves.emplace_back(Move{piece->pos, trajectory.second});
             }
         }
 
-        auto capturings = board.pieceCapturing(**piece);
+        auto capturings = board.pieceCapturing(*piece);
         for (auto const& capturing : capturings) {
             auto enemy = board.find(capturing.second);
-            if (enemy != board.end() && (*piece)->suit != (*enemy)->suit) {
-                moves.emplace_back(Move{(*piece)->pos, capturing.second});
+            if (enemy != board.end() && enemy->second && piece->suit != enemy->second.value()->suit) {
+                moves.emplace_back(Move{piece->pos, capturing.second});
             }
         }
     }
@@ -62,7 +62,7 @@ int Gamma::evalBoard(const Board& board, const Suit_t& turn) {
     for (auto const& player : board.players()) {
         score += player.second.score * (player.first == turn ? 1 : -1);
     }
-    for (auto const& piece : board) {
+    for (auto const& piece : board.pieces()) {
         if (piece->suit == turn) {
             score += piece->value;
         }

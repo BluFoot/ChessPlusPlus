@@ -17,8 +17,8 @@ int Application::execute() {
             state->aiMove();
         }
 
-        //state->onRender();
-        //display.display();
+        state->onRender();
+        display.display();
     }
 
     return 0;
