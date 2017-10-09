@@ -11,7 +11,6 @@ namespace piece
 Piece::Piece(board::Board& b,
              Position_t const& p,
              Suit_t const& s,
-             Class_t const& c,
              Score_t v,
              size_t m,
              Movements_t const& trajectories,
@@ -19,7 +18,6 @@ Piece::Piece(board::Board& b,
     : board(b) //can't use {}
       , p_{p}
       , s_{s}
-      , c_{c}
       , v_{v}
       , m_{m}
       , trajectories_{trajectories}
@@ -44,7 +42,7 @@ void Piece::transform(const Piece::Class_t& to) {
 }
 
 std::ostream& operator<<(std::ostream& os, Piece const& p) {
-    return os << "Piece (" << typeid(p).name() << ") \"" << p.suit << "\" \"" << p.pclass << "\" at " << p.pos << " having made "
+    return os << "Piece (" << typeid(p).name() << ") \"" << p.suit << "\" \"" << p.pclass() << "\" at " << p.pos << " having made "
               << p.moves << " moves";
 }
 void Piece::move(const Piece::Position_t& to) {

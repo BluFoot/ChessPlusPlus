@@ -33,11 +33,11 @@ void GraphicsHandler::drawSpriteAtCell(sf::Sprite& s, std::size_t x, std::size_t
     display.draw(s);
 }
 void GraphicsHandler::drawPiece(piece::Piece const& p) {
-    sf::Sprite piece{res.from_config<Texture_res>("board", "pieces", p.suit, p.pclass)};
+    sf::Sprite piece{res.from_config<Texture_res>("board", "pieces", p.suit, p.pclass())};
     drawSpriteAtCell(piece, p.pos.x, p.pos.y);
 }
 void GraphicsHandler::drawPieceAt(piece::Piece const& p, sf::Vector2i const& pos) {
-    sf::Sprite piece{res.from_config<Texture_res>("board", "pieces", p.suit, p.pclass)};
+    sf::Sprite piece{res.from_config<Texture_res>("board", "pieces", p.suit, p.pclass())};
     piece.setPosition(pos.x - (board_config.cellWidth() / 2), pos.y - (board_config.cellHeight() / 2));
     display.draw(piece);
 }

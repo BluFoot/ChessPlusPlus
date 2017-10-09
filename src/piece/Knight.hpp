@@ -11,8 +11,11 @@ namespace piece
 class Knight: public virtual Piece
 {
   public:
+    static constexpr char const* pclass_ = "Knight";
+
     using Piece::Piece;
     virtual std::unique_ptr<Piece> clone(board::Board& board) override;
+    char const* pclass() const override { return pclass_; };
 
   protected:
     virtual void calcTrajectory() override;

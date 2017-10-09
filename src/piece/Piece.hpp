@@ -46,7 +46,7 @@ class Piece
   public:
     Position_t const& pos = p_;
     Suit_t const& suit = s_;
-    Class_t const& pclass = c_;
+    virtual char const* pclass() const = 0;
     std::size_t const& moves = m_;
     Score_t const& value = v_;
 
@@ -56,7 +56,6 @@ class Piece
     Piece(board::Board& b,
           Position_t const& p,
           Suit_t const& s,
-          Class_t const& c,
           Score_t v,
           size_t m,
           Movements_t const& trajectories = {},

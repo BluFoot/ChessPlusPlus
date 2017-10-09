@@ -167,7 +167,7 @@ bool Board::capture(Piece_cpt piece, Piece_cpt enemy, Position_t const& to) {
 }
 
 void Board::kill(const Board::Suit_t& suit, const Piece_cpt enemy) {
-    if (enemy->pclass == "King") {
+    if (enemy->pclass() == "King") {
         players_.at(enemy->suit).alive = false;
         std::clog << "Player " << (enemy->suit) << " has been eliminated" << std::endl;
         if (1 == std::count_if(players_.begin(), players_.end(), [](const auto& player) { return player.second.alive; })) {

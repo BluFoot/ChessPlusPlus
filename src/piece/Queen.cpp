@@ -4,14 +4,14 @@ namespace chesspp
 {
 namespace piece
 {
-static auto QueenRegistration = board::Board::registerPieceClass("Queen", [](board::Board& b,
-                                                                             board::Board::Position_t const& p,
-                                                                             board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
-    return board::Board::Pieces_t::value_type(new Queen(b, p, s, "Queen", 9, 0));
+static auto QueenRegistration = board::Board::registerPieceClass(Queen::pclass_, [](board::Board& b,
+                                                                                    board::Board::Position_t const& p,
+                                                                                    board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
+    return board::Board::Pieces_t::value_type(new Queen(b, p, s, 9, 0));
 });
 
 std::unique_ptr<Piece> Queen::clone(board::Board& board) {
-    return std::make_unique<Queen>(board, pos, suit, pclass, value, moves, trajectories, capturings);
+    return std::make_unique<Queen>(board, pos, suit, value, moves, trajectories, capturings);
 }
 
 void Queen::calcTrajectory() {

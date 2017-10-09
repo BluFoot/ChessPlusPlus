@@ -4,29 +4,28 @@ namespace chesspp
 {
 namespace piece
 {
-static auto PawnRegistration = board::Board::registerPieceClass("Pawn", [](board::Board& b,
-                                                                           board::Board::Position_t const& p,
-                                                                           board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
+static auto PawnRegistration = board::Board::registerPieceClass(Pawn::pclass_, [](board::Board& b,
+                                                                                  board::Board::Position_t const& p,
+                                                                                  board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
     auto d = util::Direction::None;
     std::istringstream {std::string(b.config.metadata("pawn facing", p.y, p.x))} >> d;
-    return board::Board::Pieces_t::value_type(new Pawn(b, p, s, "Pawn", 1, 0, d));
+    return board::Board::Pieces_t::value_type(new Pawn(b, p, s, 1, 0, d));
 });
 
 Pawn::Pawn(board::Board& b,
            Position_t const& pos_,
            Suit_t const& s_,
-           Class_t const& pc,
            Score_t const& v,
            size_t m,
            util::Direction const& face,
            Movements_t const& trajectories,
            Movements_t const& capturings)
-    : Piece{b, pos_, s_, pc, v, m, trajectories, capturings}
+    : Piece{b, pos_, s_, v, m, trajectories, capturings}
       , facing{face} {
 }
 
 std::unique_ptr<Piece> Pawn::clone(board::Board& board) {
-    return std::make_unique<Pawn>(board, pos, suit, pclass, value, moves, facing, trajectories, capturings);
+    return std::make_unique<Pawn>(board, pos, suit, value, moves, facing, trajectories, capturings);
 }
 
 void Pawn::moveUpdate(const Piece::Position_t& from, const Piece::Position_t& to) {
@@ -36,7 +35,7 @@ void Pawn::moveUpdate(const Piece::Position_t& from, const Piece::Position_t& to
 }
 
 void Pawn::calcTrajectory() {
-    if (pclass == "Queen") {
+    if (pclass_ == "Queen") {
         //Queens can move infinitely in all eight directions
         using Dir = util::Direction;
         for (Dir d : {Dir::North, Dir::NorthEast, Dir::East, Dir::SouthEast, Dir::South, Dir::SouthWest, Dir::West,
