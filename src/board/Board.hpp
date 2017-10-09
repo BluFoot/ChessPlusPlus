@@ -32,7 +32,7 @@ class Board
     using Suits_t = config::BoardConfig::Suits_t;
     using Piece_pt = piece::Piece*;
     using Piece_cpt = Piece_pt const;
-    using Pieces_t = std::set<std::unique_ptr<piece::Piece>>;
+    using Pieces_t = std::vector<std::unique_ptr<piece::Piece>>;
     using Positions_t = std::unordered_map<Position_t, std::optional<Piece_cpt>>;
     using Players_t = std::unordered_map<Suit_t, PlayerDetails>;
 

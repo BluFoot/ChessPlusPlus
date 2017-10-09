@@ -19,7 +19,7 @@ std::optional<Gamma::Move> Gamma::chooseMove(Board const& board) {
         board::Board board_copy{board};
         if (board_copy.inputQuick(move)) {
             auto score = calc(board_copy, 2);
-            std::clog << move << " = " << score << std::endl;
+            //std::clog << move << " = " << score << std::endl;
             if (score > best_score) {
                 best_score = score;
                 best_move = move;

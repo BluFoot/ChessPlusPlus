@@ -13,7 +13,7 @@ Board::Board(config::BoardConfig const& conf)
       , player_order_{conf.suits()} {
     for (auto const& slot : config.initialLayout()) {
         if (slot.second) {
-            pieces_.emplace(factory().at(slot.second.value().first)(*this, slot.first, slot.second.value().second));
+            pieces_.emplace_back(factory().at(slot.second.value().first)(*this, slot.first, slot.second.value().second));
         } else {
             positions_.emplace(slot.first, std::nullopt);
         }
@@ -34,18 +34,19 @@ Board::Board(const Board& board)
     : config{board.config}
       , player_order_{board.player_order_}
       , players_{board.players_} {
+    pieces_.reserve(board.pieces_.size());
+    positions_.reserve(board.positions_.size());
+
     for (auto const& slot : board.positions_) {
-        if (!slot.second) {
+        if (slot.second) {
+            pieces_.emplace_back(slot.second.value()->clone(*this));
+            positions_.emplace(slot.first, pieces_.back().get());
+        } else {
             positions_.emplace(slot.first, std::nullopt);
         }
     }
 
-    for (auto const& piece : board.pieces_) {
-        pieces_.insert(piece->clone(*this));
-    }
-
     for (auto const& piece : pieces_) {
-        positions_.emplace(piece->pos, piece.get());
         piece->calcTrajectory();
     }
 
