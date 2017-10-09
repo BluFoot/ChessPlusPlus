@@ -8,7 +8,7 @@ namespace chesspp
 {
 namespace board
 {
-std::optional<Gamma::Move> Gamma::chooseMove(Board const& board) {
+std::optional<Gamma::Move> Gamma::chooseMove(Board board) {
     auto start = std::chrono::system_clock::now();
     player = board.turn();
 
@@ -57,16 +57,16 @@ std::vector<Gamma::Move> Gamma::legalMoves(Board const& board) {
         if (piece->suit != board.turn())
             continue;
 
-        for (auto const& trajectory : board.pieceTrajectory(piece.get())) {
-            if (board.empty(trajectory.second)) {
-                moves.emplace_back(Move{piece->pos, trajectory.second});
+        for (auto const& trajectory : piece->trajectories) {
+            if (board.empty(trajectory)) {
+                moves.emplace_back(Move{piece->pos, trajectory});
             }
         }
 
-        for (auto const& capturing : board.pieceCapturing(piece.get())) {
-            auto enemy = board.find(capturing.second);
+        for (auto const& capturing : piece->capturings) {
+            auto enemy = board.find(capturing);
             if (enemy && piece->suit != enemy.value()->suit) {
-                moves.emplace_back(Move{piece->pos, capturing.second});
+                moves.emplace_back(Move{piece->pos, capturing});
             }
         }
     }

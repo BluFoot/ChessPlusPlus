@@ -27,7 +27,7 @@ Board::Board(config::BoardConfig const& conf)
     }
 
     for (auto const& piece : pieces_) {
-        piece->calcTrajectory();
+        piece->makeTrajectory();
     }
 
     for (const auto& suit : config.suits()) {
@@ -54,7 +54,7 @@ Board::Board(const Board& board)
     }
 
     for (auto const& piece : pieces_) {
-        piece->calcTrajectory();
+        piece->makeTrajectory();
     }
 
     turn_ = std::find(player_order_.begin(), player_order_.end(), *board.turn_);
@@ -87,29 +87,6 @@ bool Board::empty(Position_t const& pos) const noexcept {
 
 bool Board::occupied(Position_t const& pos) const noexcept {
     return inBounds(pos) && positions_[pos.x][pos.y].occupied();
-}
-
-void Board::addMovement(Piece_cpt p, Position_t const& tile, Movements_t& m) {
-    m.emplace(p, tile);
-}
-
-void Board::addTrajectory(Piece_cpt p, const Board::Position_t& tile) {
-    addMovement(p, tile, trajectories);
-}
-void Board::addCapturing(Piece_cpt p, const Board::Position_t& tile) {
-    addMovement(p, tile, capturings);
-}
-
-auto Board::pieceMovement(Piece_cpt p, Movements_t const& m) const noexcept -> MovementsRange {
-    auto range = m.equal_range(p);
-    return {{range.first, range.second}};
-}
-
-auto Board::pieceTrajectory(Piece_cpt p) const noexcept -> MovementsRange {
-    return pieceMovement(p, trajectories);
-}
-auto Board::pieceCapturing(Piece_cpt p) const noexcept -> MovementsRange {
-    return pieceMovement(p, capturings);
 }
 
 bool Board::input(Move const& move) {
@@ -166,11 +143,7 @@ bool Board::moveTo(Piece_cpt piece, Position_t const& to) {
         return false;
     }
 
-    auto target = std::find_if(trajectories.begin(), trajectories.end(), [&](board::Board::Movements_t::value_type const& m) {
-        return m.first == piece && m.second == to;
-    });
-
-    if (target == trajectories.end()) {
+    if (std::find(piece->trajectories.begin(), piece->trajectories.end(), to) == piece->trajectories.end()) {
         std::cerr << "can't move that piece in that direction" << std::endl;
         return false;
     }
@@ -186,11 +159,7 @@ bool Board::capture(Piece_cpt piece, Piece_cpt enemy, Position_t const& to) {
         return false;
     }
 
-    auto capturing = std::find_if(capturings.begin(), capturings.end(), [&](board::Board::Movements_t::value_type const& m) {
-        return m.first == piece && m.second == enemy->pos;
-    });
-
-    if (capturing == capturings.end()) {
+    if (std::find(piece->capturings.begin(), piece->capturings.end(), to) == piece->capturings.end()) {
         std::cerr << "can't capture in that direction" << std::endl;
         return false;
     }
@@ -219,10 +188,8 @@ void Board::kill(const Board::Suit_t& suit, const Piece_cpt enemy) {
 }
 
 void Board::update() {
-    trajectories.clear();
-    capturings.clear();
     for (auto& p : pieces_) {
-        p->calcTrajectory();
+        p->makeTrajectory();
     }
     nextTurn();
 }

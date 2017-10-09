@@ -16,7 +16,7 @@ class Gamma
     Suit_t player;
 
   public:
-    std::optional<Move> chooseMove(Board const& board);
+    std::optional<Move> chooseMove(Board board);
 
   private:
     int calc(Board const& board, size_t depth);

@@ -33,24 +33,31 @@ class Piece
     board::Board& board;
 
   private:
-    Position_t p;
-    Suit_t s;
-    Class_t c;
-    Score_t v;
-    std::size_t m;
+    Position_t p_;
+    Suit_t s_;
+    Class_t c_;
+    Score_t v_;
+    std::size_t m_;
+
+    std::vector<Position_t> trajectories_;
+    std::vector<Position_t> capturings_;
 
   public:
-    Position_t const& pos = p;
-    Suit_t const& suit = s;
-    Class_t const& pclass = c;
-    std::size_t const& moves = m;
-    Score_t const& value = v;
+    Position_t const& pos = p_;
+    Suit_t const& suit = s_;
+    Class_t const& pclass = c_;
+    std::size_t const& moves = m_;
+    Score_t const& value = v_;
 
-    Piece(board::Board& b, Position_t const& pos, Suit_t const& s, Class_t const& pc, Score_t v, size_t m);
+    std::vector<Position_t> const& trajectories = trajectories_;
+    std::vector<Position_t> const& capturings = capturings_;
+
+    Piece(board::Board& b, Position_t const& p, Suit_t const& s, Class_t const& c, Score_t v, size_t m);
     virtual ~Piece() = default;
     virtual std::unique_ptr<Piece> clone(board::Board& board) = 0;
 
   protected:
+    void makeTrajectory();
     virtual void calcTrajectory() = 0;
 
     void addTrajectory(Position_t const& tile);
@@ -59,15 +66,8 @@ class Piece
     void transform(Class_t const& to);
 
   private:
-    void move(Position_t const& to) {
-        Position_t from = pos;
-        p = to;
-        moveUpdate(from, to);
-        ++m;
-    }
-
-    virtual void moveUpdate(Position_t const& from, Position_t const& to) {
-    }
+    void move(Position_t const& to);
+    virtual void moveUpdate(Position_t const& from, Position_t const& to) {}
 
   public:
     friend std::ostream& operator<<(std::ostream& os, Piece const& p);

@@ -44,25 +44,18 @@ void GraphicsHandler::drawPieceAt(piece::Piece const& p, sf::Vector2i const& pos
 void GraphicsHandler::drawTrajectory(board::Board::Piece_cpt p, bool enemy) {
     {
         auto& sprite = (enemy ? enemy_move : valid_move);
-        for (auto const& it : p->board.pieceTrajectory(p)) {
-            if (!p->board.occupied(it.second)) {
-                drawSpriteAtCell(sprite, it.second.x, it.second.y);
+        for (auto const& pos : p->trajectories) {
+            if (!p->board.occupied(pos)) {
+                drawSpriteAtCell(sprite, pos.x, pos.y);
             }
         }
     }
     {
         auto& sprite = (enemy ? enemy_capture : valid_capture);
-        for (auto const& m : p->board.pieceCapturing(p)) {
-            auto piece = p->board.find(m.second);
+        for (auto const& pos : p->capturings) {
+            auto piece = p->board.find(pos);
             if (piece && piece.value()->suit != p->suit) {
-                drawSpriteAtCell(sprite, m.second.x, m.second.y);
-                auto jt = std::find_if(p->board.pieceTrajectories().begin(), p->board.pieceTrajectories().end(),
-                                       [&](board::Board::Movements_t::value_type const& m) {
-                                           return m.first->pos == m.second;
-                                       });
-                if (jt != p->board.pieceTrajectories().end()) {
-                    drawPiece(*(jt->first)); //redraw
-                }
+                drawSpriteAtCell(sprite, pos.x, pos.y);
                 break;
             }
         }

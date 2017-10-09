@@ -64,7 +64,6 @@ class Board
         return os << m.from << " => " << m.to;
     }
 
-    using Movements_t = std::multimap<Piece_cpt, Position_t>;
     using Factory_t = std::map<config::BoardConfig::PieceClass_t, std::function<
         Pieces_t::value_type(Board&, Position_t const&, Suit_t const&)>>; //Used to create new pieces
 
@@ -78,9 +77,6 @@ class Board
     Suits_t::const_iterator turn_;
     Players_t players_;
     std::optional<Players_t::const_iterator> winner_;
-
-    Movements_t trajectories; //where pieces can go
-    Movements_t capturings;   //where pieces can capture
 
     static Factory_t& factory() {
         static Factory_t f;
@@ -108,22 +104,6 @@ class Board
     bool occupied(Position_t const& pos) const noexcept;
 
   public:
-    void addTrajectory(Piece_cpt p, Position_t const& tile);
-    void addCapturing(Piece_cpt p, Position_t const& tile);
-
-    Movements_t const& pieceTrajectories() const noexcept { return trajectories; }
-    Movements_t const& pieceCapturings() const noexcept { return capturings; }
-
-    using MovementsRange = util::Range<Movements_t::const_iterator>;
-    MovementsRange pieceTrajectory(Piece_cpt p) const noexcept;
-    MovementsRange pieceCapturing(Piece_cpt p) const noexcept;
-
-  private:
-    void addMovement(Piece_cpt p, Position_t const& tile, Movements_t& m);
-    auto pieceMovement(Piece_cpt p, Movements_t const& m) const noexcept -> MovementsRange;
-
-  public:
-
     bool input(Move const& move);
     void inputQuick(Move const& move);
 
