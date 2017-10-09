@@ -21,7 +21,7 @@ class Pawn: public virtual Piece
 
     Pawn(board::Board& b,
          Position_t const& pos_,
-         Suit_t const& s_,
+         Player_t const& s_,
          size_t m,
          util::Direction const& face,
          bool transformed,

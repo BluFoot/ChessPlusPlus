@@ -7,7 +7,7 @@ namespace chesspp
 class PlayerDetails
 {
   public:
-    using Suit_t = config::BoardConfig::SuitClass_t;
+    using Suit_t = config::BoardConfig::Player_t;
     using Score_t = config::BoardConfig::Score_t;
 
     bool alive = true;

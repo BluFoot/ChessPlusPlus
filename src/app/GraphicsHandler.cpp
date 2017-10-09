@@ -33,11 +33,11 @@ void GraphicsHandler::drawSpriteAtCell(sf::Sprite& s, std::size_t x, std::size_t
     display.draw(s);
 }
 void GraphicsHandler::drawPiece(piece::Piece const& p) {
-    sf::Sprite piece{res.from_config<Texture_res>("board", "pieces", p.suit, p.pclass())};
+    sf::Sprite piece{res.from_config<Texture_res>("board", "pieces", board_config.suits().at(p.player), p.pclass())};
     drawSpriteAtCell(piece, p.pos.x, p.pos.y);
 }
 void GraphicsHandler::drawPieceAt(piece::Piece const& p, sf::Vector2i const& pos) {
-    sf::Sprite piece{res.from_config<Texture_res>("board", "pieces", p.suit, p.pclass())};
+    sf::Sprite piece{res.from_config<Texture_res>("board", "pieces", board_config.suits().at(p.player), p.pclass())};
     piece.setPosition(pos.x - (board_config.cellWidth() / 2), pos.y - (board_config.cellHeight() / 2));
     display.draw(piece);
 }
@@ -54,7 +54,7 @@ void GraphicsHandler::drawTrajectory(board::Board::Piece_cpt p, bool enemy) {
         auto& sprite = (enemy ? enemy_capture : valid_capture);
         for (auto const& pos : p->capturings) {
             auto piece = p->board.find(pos);
-            if (piece && piece.value()->suit != p->suit) {
+            if (piece && piece.value()->player != p->player) {
                 drawSpriteAtCell(sprite, pos.x, pos.y);
                 break;
             }
@@ -71,10 +71,10 @@ void GraphicsHandler::drawBoard(board::Board const& b) {
     }
 
     std::string scores_text;
-    for (const auto& suit : b.player_order()) {
+    for (const auto& suit : b.players()) {
         scores_text += suit;
         scores_text += ": ";
-        scores_text += std::to_string(b.players().at(suit).score);
+        scores_text += std::to_string(b.playersDetails().at(suit).score);
         scores_text += "\n";
     }
     scores.setString(scores_text);

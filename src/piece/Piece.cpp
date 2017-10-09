@@ -10,12 +10,12 @@ namespace piece
 {
 Piece::Piece(board::Board& b,
              Position_t const& p,
-             Suit_t const& s,
+             Player_t const& s,
              Movements_t const& trajectories,
              Movements_t const& capturings)
     : board(b) //can't use {}
-      , p_{p}
-      , s_{s}
+      , pos_{p}
+      , player{s}
       , trajectories_{trajectories}
       , capturings_{capturings} {}
 
@@ -34,11 +34,11 @@ void Piece::addCapturing(Position_t const& tile) {
 }
 
 std::ostream& operator<<(std::ostream& os, Piece const& p) {
-    return os << "Piece (" << typeid(p).name() << ") \"" << p.suit << "\" \"" << p.pclass() << "\" at " << p.pos;
+    return os << "Piece (" << typeid(p).name() << ") \"" << p.player << "\" \"" << p.pclass() << "\" at " << p.pos;
 }
 void Piece::move(const Piece::Position_t& to) {
     Position_t from = pos;
-    p_ = to;
+    pos_ = to;
     moveUpdate(from, to);
 }
 }

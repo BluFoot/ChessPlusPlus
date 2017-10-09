@@ -28,13 +28,13 @@ class Board
   public:
     using BoardSize_t = config::BoardConfig::BoardSize_t;
     using Position_t = config::BoardConfig::Position_t;
-    using Suit_t = config::BoardConfig::SuitClass_t;
-    using Suits_t = config::BoardConfig::Suits_t;
+    using Player_t = config::BoardConfig::Player_t;
+    using Players_t = config::BoardConfig::Players_t;
     using Piece_pt = piece::Piece*;
     using Piece_cpt = Piece_pt const;
     using Pieces_t = std::vector<std::unique_ptr<piece::Piece>>;
     using Coord_t = Position_t::Coord_t;
-    using Players_t = std::unordered_map<Suit_t, PlayerDetails>;
+    using PlayerDetails_t = std::unordered_map<Player_t, PlayerDetails>;
 
     static constexpr Coord_t BOARD_SIZE = 16;
     struct Square
@@ -64,8 +64,8 @@ class Board
         return os << m.from << " => " << m.to;
     }
 
-    using Factory_t = std::map<config::BoardConfig::PieceClass_t, std::function<
-        Pieces_t::value_type(Board&, Position_t const&, Suit_t const&)>>; //Used to create new pieces
+    using Factory_t = std::map<config::BoardConfig::Piece_t, std::function<
+        Pieces_t::value_type(Board&, Position_t const&, Player_t const&)>>; //Used to create new pieces
 
     config::BoardConfig const& config;
 
@@ -73,10 +73,10 @@ class Board
     Pieces_t pieces_;
     Positions_t positions_;
 
-    Suits_t player_order_;
-    Suits_t::const_iterator turn_;
     Players_t players_;
-    std::optional<Players_t::const_iterator> winner_;
+    Players_t::const_iterator turn_;
+    PlayerDetails_t players_details_;
+    std::optional<PlayerDetails_t::const_iterator> winner_;
 
     static Factory_t& factory() {
         static Factory_t f;
@@ -88,10 +88,10 @@ class Board
     Board(const Board& board);
 
     Pieces_t const& pieces() const { return pieces_; }
-    Suit_t const& turn() const { return *turn_; };
-    Suits_t const& player_order() const { return player_order_; }
+    Player_t const& turn() const { return *turn_; };
     Players_t const& players() const { return players_; }
-    std::optional<Players_t::const_iterator> winner() const { return winner_; };
+    PlayerDetails_t const& playersDetails() const { return players_details_; }
+    std::optional<PlayerDetails_t::const_iterator> winner() const { return winner_; };
 
     static auto registerPieceClass(Factory_t::key_type const& type, Factory_t::mapped_type ctor) -> Factory_t::iterator {
         return factory().insert({type, ctor}).first;
@@ -103,7 +103,6 @@ class Board
     bool empty(Position_t const& pos) const noexcept;
     bool occupied(Position_t const& pos) const noexcept;
 
-  public:
     bool input(Move const& move);
     void inputQuick(Move const& move);
 
@@ -111,7 +110,7 @@ class Board
     void movePiece(Piece_cpt piece, Position_t const& to);
     bool moveTo(Piece_cpt piece, Position_t const& to);
     bool capture(Piece_cpt piece, Piece_cpt enemy, Position_t const& to);
-    void kill(const Board::Suit_t& suit, Piece_cpt enemy);
+    void kill(const Board::Player_t& suit, Piece_cpt enemy);
 
     void update();
     void nextTurn();

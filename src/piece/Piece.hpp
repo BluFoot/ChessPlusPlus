@@ -26,23 +26,22 @@ class Piece
 
   public:
     using Position_t = config::BoardConfig::Position_t;
-    using Suit_t     = config::BoardConfig::SuitClass_t;
-    using Class_t    = config::BoardConfig::PieceClass_t;
+    using Player_t     = config::BoardConfig::Player_t;
+    using Class_t    = config::BoardConfig::Piece_t;
     using Score_t    = config::BoardConfig::Score_t;
     using Movements_t = std::vector<Position_t>;
 
     board::Board& board;
 
   private:
-    Position_t p_;
-    Suit_t s_;
+    Position_t pos_;
 
     Movements_t trajectories_;
     Movements_t capturings_;
 
   public:
-    Position_t const& pos = p_;
-    Suit_t const& suit = s_;
+    Position_t const& pos = pos_;
+    const Player_t player;
     virtual char const* pclass() const = 0;
     virtual Score_t value() const = 0;
 
@@ -51,7 +50,7 @@ class Piece
 
     Piece(board::Board& b,
           Position_t const& p,
-          Suit_t const& s,
+          Player_t const& s,
           Movements_t const& trajectories = {},
           Movements_t const& capturings = {});
     virtual ~Piece() = default;

@@ -24,7 +24,7 @@ void ChessPlusPlusState::onRender() {
     }
     auto piece = board.find(target);
     if (piece) {
-        graphics.drawTrajectory(piece.value(), piece.value()->suit != board.turn());
+        graphics.drawTrajectory(piece.value(), piece.value()->player != board.turn());
     }
 }
 
@@ -53,8 +53,8 @@ void ChessPlusPlusState::onLButtonReleased(int x, int y) {
 
 bool ChessPlusPlusState::waitingForUser() {
     //return true;
-    //return false;
-    return board.turn() == "Red";
+    return false;
+    //return board.turn() == 'R';
 }
 
 void ChessPlusPlusState::aiMove() {
@@ -64,7 +64,7 @@ void ChessPlusPlusState::aiMove() {
 
 void ChessPlusPlusState::select() {
     selected = board.find(target);
-    if (selected && selected.value()->suit != board.turn()) {
+    if (selected && selected.value()->player != board.turn()) {
         selected = std::nullopt; //can't select enemy pieces
     }
 }
@@ -74,7 +74,9 @@ void ChessPlusPlusState::nextTurn() {
     target = {127, 127};
     auto winner = board.winner();
     if (winner) {
-        app.changeState<GameOverState>(app, display, winner.value()->first, std::to_string(winner.value()->second.score));
+        auto suit = board_config.suits().at(winner.value()->first);
+        auto score = winner.value()->second.score;
+        app.changeState<GameOverState>(app, display, suit, std::to_string(score));
     }
 }
 

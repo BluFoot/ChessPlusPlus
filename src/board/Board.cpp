@@ -10,15 +10,18 @@ namespace board
 {
 Board::Board(config::BoardConfig const& conf)
     : config(conf)
-      , player_order_{conf.suits()} {
-    auto layout = config.initialLayout();
+      , players_{conf.players()} {
+    auto layout = config.layout();
     for (Coord_t c = 0; c < BOARD_SIZE; ++c) {
         for (Coord_t r = 0; r < BOARD_SIZE; ++r) {
             auto slot = layout.find({c, r});
             if (slot == layout.end()) {
                 positions_[c][r].state = Square::INVALID;
             } else if (slot->second.has_value()) {
-                pieces_.emplace_back(factory().at(slot->second.value().first)(*this, slot->first, slot->second.value().second));
+                auto type = slot->second.value().first;
+                auto pos = slot->first;
+                auto player = slot->second.value().second;
+                pieces_.emplace_back(factory().at(type)(*this, pos, player));
                 positions_[c][r].occupy(pieces_.back().get());
             } else {
                 positions_[c][r].state = Square::EMPTY;
@@ -30,16 +33,16 @@ Board::Board(config::BoardConfig const& conf)
         piece->makeTrajectory();
     }
 
-    for (const auto& suit : config.suits()) {
-        players_.emplace(suit, PlayerDetails{});
+    for (const auto& suit : config.players()) {
+        players_details_.emplace(suit, PlayerDetails{});
     }
-    turn_ = player_order_.begin();
+    turn_ = players_.begin();
 }
 
 Board::Board(const Board& board)
     : config{board.config}
-      , player_order_{board.player_order_}
-      , players_{board.players_} {
+      , players_{board.players_}
+      , players_details_{board.players_details_} {
     pieces_.reserve(board.pieces_.size());
 
     for (Coord_t c = 0; c < BOARD_SIZE; ++c) {
@@ -53,9 +56,9 @@ Board::Board(const Board& board)
         }
     }
 
-    turn_ = std::find(player_order_.begin(), player_order_.end(), *board.turn_);
+    turn_ = std::find(players_.begin(), players_.end(), *board.turn_);
     if (board.winner_) {
-        winner_ = players_.find((*board.winner_)->first);
+        winner_ = players_details_.find((*board.winner_)->first);
     }
 }
 
@@ -102,7 +105,7 @@ bool Board::input(Move const& move) {
         return false;
     }
 
-    if (piece.value()->suit != *turn_) {
+    if (piece.value()->player != *turn_) {
         std::cerr << "can't move a piece that doesn't belong to you" << std::endl;
         return false;
     }
@@ -120,7 +123,7 @@ void Board::inputQuick(Move const& move) {
     auto enemy = find(move.to);
 
     if (enemy) {
-        kill(piece.value()->suit, enemy.value());
+        kill(piece.value()->player, enemy.value());
     }
 
     movePiece(piece.value(), move.to);
@@ -150,7 +153,7 @@ bool Board::moveTo(Piece_cpt piece, Position_t const& to) {
 }
 
 bool Board::capture(Piece_cpt piece, Piece_cpt enemy, Position_t const& to) {
-    if (enemy->suit == piece->suit) {
+    if (enemy->player == piece->player) {
         std::cerr << "can't capture your own piece" << std::endl;
         return false;
     }
@@ -160,25 +163,25 @@ bool Board::capture(Piece_cpt piece, Piece_cpt enemy, Position_t const& to) {
         return false;
     }
 
-    kill(piece->suit, enemy);
+    kill(piece->player, enemy);
     movePiece(piece, to);
     update();
     return true;
 }
 
-void Board::kill(const Board::Suit_t& suit, const Piece_cpt enemy) {
+void Board::kill(const Board::Player_t& suit, const Piece_cpt enemy) {
     if (enemy->pclass() == "King") {
-        players_.at(enemy->suit).alive = false;
-        std::clog << "Player " << (enemy->suit) << " has been eliminated" << std::endl;
-        if (1 == std::count_if(players_.begin(), players_.end(), [](const auto& player) { return player.second.alive; })) {
-            winner_ = std::max_element(players_.begin(), players_.end(), [](const auto& player1, const auto& player2) {
+        players_details_.at(enemy->player).alive = false;
+        std::clog << "Player " << (enemy->player) << " has been eliminated" << std::endl;
+        if (1 == std::count_if(players_details_.begin(), players_details_.end(), [](const auto& player) { return player.second.alive; })) {
+            winner_ = std::max_element(players_details_.begin(), players_details_.end(), [](const auto& player1, const auto& player2) {
                 return player1.second.score < player2.second.score;
             });
             std::clog << "Game over, winner: " << winner_.value()->first << std::endl;
         }
     }
 
-    players_.at(suit).score += enemy->value();
+    players_details_.at(suit).score += enemy->value();
     auto enemy_it = std::find_if(pieces_.begin(), pieces_.end(), [&](auto const& p) { return p.get() == enemy; });
     pieces_.erase(enemy_it);
 }
@@ -192,10 +195,10 @@ void Board::update() {
 
 void Board::nextTurn() {
     do {
-        if (++turn_ == player_order_.end()) {
-            turn_ = player_order_.begin();
+        if (++turn_ == players_.end()) {
+            turn_ = players_.begin();
         }
-    } while (!players_.at(*turn_).alive);
+    } while (!players_details_.at(*turn_).alive);
 }
 }
 }

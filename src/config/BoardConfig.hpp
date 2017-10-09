@@ -26,18 +26,21 @@ class BoardConfig: public Configuration
     using BoardSize_t = std::uint8_t;
     using CellSize_t = std::uint16_t;
     using Position_t = util::Position;
-    using PieceClass_t = std::string;
-    using SuitClass_t = std::string;
+    using Piece_t = std::string;
+    using Player_t = char;
+    using Suit_t = std::string;
     using Score_t = int;
-    using Square_t = std::optional<std::pair<PieceClass_t, SuitClass_t>>;
+
+    using Players_t = std::vector<Player_t>;
+    using Suits_t = std::unordered_map<Player_t, Suit_t>;
+    using Square_t = std::optional<std::pair<Piece_t, Player_t>>;
     using Layout_t = std::map<Position_t, Square_t>;
-    using Textures_t = std::map<BoardConfig::SuitClass_t, std::map<BoardConfig::PieceClass_t, std::string>>;
-    using Suits_t = std::vector<SuitClass_t>;
 
   private:
-    Suits_t players;
+    Players_t players_;
+    Suits_t suits_;
+    Layout_t layout_;
     CellSize_t cell_width, cell_height;
-    Layout_t layout;
 
   public:
     /**
@@ -49,8 +52,9 @@ class BoardConfig: public Configuration
     explicit BoardConfig(ResourcesConfig& res);
     ~BoardConfig() override = default;
 
-    Suits_t suits() const noexcept { return players; }
-    Layout_t const& initialLayout() const noexcept { return layout; }
+    Players_t const& players() const noexcept { return players_; }
+    Suits_t const& suits() const noexcept { return suits_; }
+    Layout_t const& layout() const noexcept { return layout_; }
     CellSize_t cellWidth() const noexcept { return cell_width; }
     CellSize_t cellHeight() const noexcept { return cell_height; }
 

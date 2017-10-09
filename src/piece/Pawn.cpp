@@ -6,7 +6,7 @@ namespace piece
 {
 static auto PawnRegistration = board::Board::registerPieceClass(Pawn::pclass_, [](board::Board& b,
                                                                                   board::Board::Position_t const& p,
-                                                                                  board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
+                                                                                  board::Board::Player_t const& s) -> board::Board::Pieces_t::value_type {
     auto d = util::Direction::None;
     std::istringstream {std::string(b.config.metadata("pawn facing", p.y, p.x))} >> d;
     return board::Board::Pieces_t::value_type(new Pawn(b, p, s, 0, d, false));
@@ -14,7 +14,7 @@ static auto PawnRegistration = board::Board::registerPieceClass(Pawn::pclass_, [
 
 Pawn::Pawn(board::Board& b,
            Position_t const& pos_,
-           Suit_t const& s_,
+           Player_t const& s_,
            size_t m,
            util::Direction const& face,
            bool transformed,
@@ -27,7 +27,7 @@ Pawn::Pawn(board::Board& b,
 }
 
 std::unique_ptr<Piece> Pawn::clone(board::Board& board) {
-    return std::make_unique<Pawn>(board, pos, suit, moves_, facing_, transformed_, trajectories, capturings);
+    return std::make_unique<Pawn>(board, pos, player, moves_, facing_, transformed_, trajectories, capturings);
 }
 
 void Pawn::moveUpdate(const Piece::Position_t& from, const Piece::Position_t& to) {
@@ -50,7 +50,7 @@ void Pawn::calcTrajectory() {
                     addTrajectory(t);
                 } else {
                     auto piece = board.find(t);
-                    if (piece && piece.value()->suit != suit) {
+                    if (piece && piece.value()->player != player) {
                         addCapturing(t);
                     }
                     break;
@@ -76,7 +76,7 @@ void Pawn::calcTrajectory() {
         for (auto rotation : {+1, -1}) {
             Position_t diag = Position_t(pos).move(Rotate(facing_, rotation));
             auto piece = board.find(diag);
-            if (piece && piece.value()->suit != suit) {
+            if (piece && piece.value()->player != player) {
                 addCapturing(diag);
             }
         }

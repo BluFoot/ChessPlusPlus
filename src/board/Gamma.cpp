@@ -29,7 +29,7 @@ std::pair<Gamma::Move, int> Gamma::calc(Board const& board, size_t depth) {
     int best_score = std::numeric_limits<int>::min();
 
     for (auto const& piece : board.pieces()) {
-        if (piece->suit != board.turn()) {
+        if (piece->player != board.turn()) {
             continue;
         }
 
@@ -53,11 +53,11 @@ std::pair<Gamma::Move, int> Gamma::calc(Board const& board, size_t depth) {
 
 int Gamma::evalBoard(const Board& board, const Suit_t& turn) {
     int score = 0;
-    for (auto const& player : board.players()) {
+    for (auto const& player : board.playersDetails()) {
         score += player.second.score * (player.first == turn ? 1 : -1);
     }
     for (auto const& piece : board.pieces()) {
-        if (piece->suit == turn) {
+        if (piece->player == turn) {
             score += piece->value();
         }
     }

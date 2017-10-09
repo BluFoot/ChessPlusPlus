@@ -6,12 +6,12 @@ namespace piece
 {
 static auto KnightRegistration = board::Board::registerPieceClass(Knight::pclass_, [](board::Board& b,
                                                                                       board::Board::Position_t const& p,
-                                                                                      board::Board::Suit_t const& s) -> board::Board::Pieces_t::value_type {
+                                                                                      board::Board::Player_t const& s) -> board::Board::Pieces_t::value_type {
     return board::Board::Pieces_t::value_type(new Knight(b, p, s));
 });
 
 std::unique_ptr<Piece> Knight::clone(board::Board& board) {
-    return std::make_unique<Knight>(board, pos, suit, trajectories, capturings);
+    return std::make_unique<Knight>(board, pos, player, trajectories, capturings);
 }
 
 void Knight::calcTrajectory() {
@@ -23,7 +23,7 @@ void Knight::calcTrajectory() {
             addTrajectory(t);
         } else {
             auto piece = board.find(t);
-            if (piece && piece.value()->suit != suit) {
+            if (piece && piece.value()->player != player) {
                 addCapturing(t);
             }
         }
