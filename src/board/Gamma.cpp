@@ -12,7 +12,7 @@ Gamma::Move Gamma::chooseMove(Board board) {
     auto start = std::chrono::system_clock::now();
     player = board.turn();
 
-    auto best_move = calc(board, 3).first;
+    auto best_move = calc(board, 4).first;
 
     auto duration = std::chrono::system_clock::now() - start;
     std::clog << "calc() " << board.turn() << ": " << best_move << " "

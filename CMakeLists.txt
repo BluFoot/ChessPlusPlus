@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.7)
 
 project(ChessPlusPlus)
 
+set(CMAKE_CXX_FLAGS "-O3 ${CMAKE_CXX_FLAGS}")
+
 # json-parser
 add_library(json-parser
 	"deps/json-parser/json.c"
